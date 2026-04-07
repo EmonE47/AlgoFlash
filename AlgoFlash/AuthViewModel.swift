@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 import FirebaseAuth
 
 @MainActor
@@ -7,12 +8,20 @@ class AuthViewModel: ObservableObject {
     @Published var errorMessage: String = ""
     @Published var isLoading: Bool = false
     
+    private var authStateListenerHandle: AuthStateDidChangeListenerHandle?
+    
     init() {
         self.userSession = AuthService.shared.getCurrentUser()
         
         // Listen for changes in login state
-        Auth.auth().addStateDidChangeListener { [weak self] _, user in
+        authStateListenerHandle = Auth.auth().addStateDidChangeListener { [weak self] _, user in
             self?.userSession = user
+        }
+    }
+    
+    deinit {
+        if let handle = authStateListenerHandle {
+            Auth.auth().removeStateDidChangeListener(handle)
         }
     }
     
