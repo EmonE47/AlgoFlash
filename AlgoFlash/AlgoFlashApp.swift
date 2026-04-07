@@ -1,27 +1,10 @@
 import SwiftUI
-import UIKit
 import FirebaseCore
 
-
-#if canImport(FirebaseCore)
-final class AppDelegate: NSObject, UIApplicationDelegate {
-    func application(
-        _ application: UIApplication,
-        didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
-    ) -> Bool {
-        guard FirebaseApp.app() == nil else {
-            return true
-        }
-
-        guard
-            let filePath = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
-            let options = FirebaseOptions(contentsOfFile: filePath)
-        else {
-            assertionFailure("Missing GoogleService-Info.plist in the AlgoFlash target.")
-            return true
-        }
-
-        FirebaseApp.configure(options: options)
+class AppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication,
+                     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        FirebaseApp.configure()
         return true
     }
 }
@@ -29,11 +12,12 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
 @main
 struct AlgoFlashApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    @StateObject var authViewModel = AuthViewModel()
     
-
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(authViewModel)
         }
     }
 }
