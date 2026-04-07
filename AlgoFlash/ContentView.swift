@@ -1,9 +1,3 @@
-//
-//  ContentView.swift
-//  AlgoFlash
-//
-//  Created by Md. Shifat Hasan on 3/4/26.
-//
 
 import SwiftUI
 

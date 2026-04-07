@@ -1,9 +1,3 @@
-//
-//  AlgoFlashApp.swift
-//  AlgoFlash
-//
-//
-
 import SwiftUI
 
 import UIKit
