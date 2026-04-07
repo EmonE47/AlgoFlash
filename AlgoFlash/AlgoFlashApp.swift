@@ -1,14 +1,19 @@
 import SwiftUI
+
 import UIKit
-import FirebaseCore
-
-
 #if canImport(FirebaseCore)
+import FirebaseCore
+#endif
+#if canImport(GoogleSignIn)
+import GoogleSignIn
+#endif
+
 final class AppDelegate: NSObject, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil
     ) -> Bool {
+        #if canImport(FirebaseCore)
         guard FirebaseApp.app() == nil else {
             return true
         }
@@ -22,18 +27,35 @@ final class AppDelegate: NSObject, UIApplicationDelegate {
         }
 
         FirebaseApp.configure(options: options)
+        #endif
         return true
+    }
+
+    func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
+        #if canImport(GoogleSignIn)
+        return GIDSignIn.sharedInstance.handle(url)
+        #else
+        return false
+        #endif
     }
 }
 
 @main
 struct AlgoFlashApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .onOpenURL { url in
+                    #if canImport(GoogleSignIn)
+                    _ = GIDSignIn.sharedInstance.handle(url)
+                    #endif
+                }
         }
     }
 }

@@ -1,108 +1,80 @@
 # Firebase Setup For This Project
 
-This project is prepared so Firebase will initialize automatically after two things are added:
+This project is now wired for:
 
-1. The Firebase Apple SDK package
-2. `GoogleService-Info.plist`
+1. Firebase Core initialization
+2. Email/password sign in
+3. Email/password account creation
+4. Google sign-in
+5. Firestore user profile sync to `users/{uid}`
 
 ## Correct config file
 
-For iPhone/iPad apps, Firebase uses:
+For Apple platforms, Firebase uses:
 
 `GoogleService-Info.plist`
 
 Do not use `google-services.json` in this iOS project. That file is for Android.
 
-## Where to put the Firebase file from VS Code
+## Where the config file goes
 
-Copy your downloaded Firebase Apple config file to:
+Place the file here:
 
 `AlgoFlash/GoogleService-Info.plist`
 
-That keeps the file inside the app folder next to the Swift files.
+That is the app folder beside the Swift files.
 
-## What is already done
+## What is already done in the repo
 
-- `AlgoFlash/AlgoFlashApp.swift` now contains Firebase startup code.
-- When the app launches, it looks for `GoogleService-Info.plist` in the app bundle and configures Firebase automatically.
+- `AlgoFlash/AlgoFlashApp.swift` configures Firebase on launch.
+- `AlgoFlash/AuthenticationViewModel.swift` contains the real authentication logic.
+- `AlgoFlash/AuthFlowView.swift` and the auth UI files call the real login/register/Google actions.
+- `AlgoFlash/Info.plist` contains the Google callback URL scheme for the current Firebase app.
+- `AlgoFlash.xcodeproj/project.pbxproj` now includes Swift Package references for:
+  - `FirebaseCore`
+  - `FirebaseAuth`
+  - `FirebaseFirestore`
+  - `GoogleSignIn`
 
-## What you can do from Windows and VS Code
+## Important note about the Google URL scheme
 
-1. In Firebase Console, make sure you registered the Apple app using this bundle ID:
-   `com.project.AlgoFlash`
-2. Download `GoogleService-Info.plist`
-3. Put the file in:
-   `AlgoFlash/GoogleService-Info.plist`
-4. Save and commit your code if you are using git
-5. Send the project to your friend's Mac
+`AlgoFlash/Info.plist` currently contains the reversed client ID from the current `GoogleService-Info.plist`.
 
-## Minimum steps on your friend's Mac at night
+If you ever replace `GoogleService-Info.plist` with a new Firebase app config, make sure the URL scheme inside `AlgoFlash/Info.plist` matches the new `REVERSED_CLIENT_ID`.
 
-Because this is an iOS app, the Apple toolchain still has to run on macOS. The smallest Xcode step is:
+## Minimum steps on the Mac
 
 1. Open `AlgoFlash.xcodeproj`
-2. Add the Firebase package:
-   `File -> Add Package Dependencies`
-3. Use this package URL:
-   `https://github.com/firebase/firebase-ios-sdk`
-4. Add at least:
-   `FirebaseCore`
-5. Confirm `GoogleService-Info.plist` appears inside the `AlgoFlash` target
-6. Build and run
+2. Let Xcode resolve the Swift packages
+3. Confirm `GoogleService-Info.plist` is included in the `AlgoFlash` target
+4. Build and run
 
-## If you want more Firebase products
+## If package resolution fails
 
-Add the product that matches what you need:
+Open the project in Xcode and check:
 
-- Auth: `FirebaseAuth`
-- Firestore: `FirebaseFirestore`
-- Storage: `FirebaseStorage`
-- Analytics: `FirebaseAnalytics`
-- Messaging: `FirebaseMessaging`
+1. `File -> Packages -> Resolve Package Versions`
+2. The package URLs are:
+   - `https://github.com/firebase/firebase-ios-sdk.git`
+   - `https://github.com/google/GoogleSignIn-iOS.git`
 
-## Important limitation
+## Expected Firebase Console setup
 
-You can prepare almost everything in VS Code on Windows, but you cannot fully finish native iOS package resolution, signing, and app build without a Mac or macOS CI.
+Make sure these are enabled in Firebase Console:
 
-## Alternative if you want true VS Code only
+- Authentication -> Email/Password
+- Authentication -> Google
+- Firestore Database if you want profile documents synced
 
-If you want to avoid the native Firebase iOS SDK completely, some Firebase services can be used through REST APIs from Swift `URLSession`, for example:
+## What should work after Xcode resolves packages
 
-- Firebase Auth REST API
-- Cloud Firestore REST API
+- Login with email/password
+- Register with email/password
+- Google sign-in
+- Persistent signed-in session
+- Sign out
+- Firestore user profile merge for authenticated users
 
-That approach works from VS Code only, but you lose the normal Apple SDK integration and features like Analytics, Crashlytics, and easier Auth/Firestore client support.
+## Remaining limitation
 
-
-add pakages via:
-https://github.com/firebase/firebase-ios-sdk
-
-
-needed code:
-import SwiftUI
-import FirebaseCore
-
-
-class AppDelegate: NSObject, UIApplicationDelegate {
-  func application(_ application: UIApplication,
-                   didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
-    FirebaseApp.configure()
-
-    return true
-  }
-}
-
-@main
-struct YourApp: App {
-  // register app delegate for Firebase setup
-  @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-
-
-  var body: some Scene {
-    WindowGroup {
-      NavigationView {
-        ContentView()
-      }
-    }
-  }
-}
+The codebase is prepared from Windows, but the final native build and actual iOS runtime test still require Xcode/macOS.
