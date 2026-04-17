@@ -28,22 +28,9 @@
 		918368692F7EF6A50003A93C /* AlgoFlash.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AlgoFlash.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
-/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		918368772F7EF6A80003A93C /* Exceptions for "AlgoFlash" folder in "AlgoFlash" target */ = {
-			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
-			membershipExceptions = (
-				AlgoFlash/,
-			);
-			target = 918368682F7EF6A50003A93C /* AlgoFlash */;
-		};
-/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
-
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		9183686B2F7EF6A50003A93C /* AlgoFlash */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
-			exceptions = (
-				918368772F7EF6A80003A93C /* Exceptions for "AlgoFlash" folder in "AlgoFlash" target */,
-			);
 			path = AlgoFlash;
 			sourceTree = "<group>";
 		};
