@@ -49,6 +49,12 @@ struct QuizView: View {
                         showingStartButton = true
                         viewModel.score = 0
                     })
+                } else if viewModel.questions.isEmpty {
+                    ContentUnavailableView(
+                        "No Quiz Questions",
+                        systemImage: "questionmark.circle",
+                        description: Text("Ask an admin to add quiz questions in the Manage Quiz tab.")
+                    )
                 } else if let currentQuestion = viewModel.currentQuestion {
                     QuizQuestionView(viewModel: viewModel, question: currentQuestion)
                 } else {
@@ -60,8 +66,6 @@ struct QuizView: View {
         }
     }
     
-    // Add timePerQuestion property for display
-    static let timePerQuestion = 30
 }
 
 struct QuizQuestionView: View {
@@ -123,7 +127,6 @@ struct QuizQuestionView: View {
                 .cornerRadius(8)
 
                 Button(action: {
-                    viewModel.checkAnswer()
                     viewModel.nextQuestion()
                 }) {
                     Text(viewModel.currentIndex + 1 == viewModel.questions.count ? "Finish" : "Next")

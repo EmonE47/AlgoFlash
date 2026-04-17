@@ -14,8 +14,9 @@ class QuizViewModel: ObservableObject {
     @Published var isLoading: Bool = false
 
     private var timer: Timer?
+    private var hasScoredCurrentQuestion = false
     private var userID: String? { Auth.auth().currentUser?.uid }
-    private let timePerQuestion = 30
+    let timePerQuestion = 30
 
     func loadQuestions() {
         isLoading = true
@@ -37,6 +38,7 @@ class QuizViewModel: ObservableObject {
         score = 0
         isFinished = false
         timeRemaining = timePerQuestion
+        hasScoredCurrentQuestion = false
         startTimer()
     }
 
@@ -44,6 +46,8 @@ class QuizViewModel: ObservableObject {
         if !isAnswered {
             selectedOption = index
             isAnswered = true
+            stopTimer()
+            checkAnswer()
         }
     }
 
@@ -52,9 +56,12 @@ class QuizViewModel: ObservableObject {
         selectedOption = nil
         isAnswered = false
         timeRemaining = timePerQuestion
+        hasScoredCurrentQuestion = false
 
         if currentIndex >= questions.count {
             finishQuiz()
+        } else {
+            startTimer()
         }
     }
 
@@ -63,10 +70,11 @@ class QuizViewModel: ObservableObject {
         stopTimer()
         
         guard let uid = userID else { return }
-        FirestoreService.shared.saveScore(userId: uid, score: score, total: questions.count) { _ in }
+        FirestoreService.shared.saveResult(userId: uid, score: score, total: questions.count) { _ in }
     }
 
     private func startTimer() {
+        stopTimer()
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
             Task { @MainActor in
                 self?.timeRemaining -= 1
@@ -93,10 +101,13 @@ class QuizViewModel: ObservableObject {
 
     func checkAnswer() {
         guard let currentQuestion = currentQuestion,
-              let selectedOption = selectedOption else { return }
+              let selectedOption = selectedOption,
+              !hasScoredCurrentQuestion else { return }
         
         if selectedOption == currentQuestion.correctIndex {
             score += 1
         }
+
+        hasScoredCurrentQuestion = true
     }
 }
