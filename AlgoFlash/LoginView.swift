@@ -17,6 +17,12 @@ struct LoginView: View {
                 Text("AlgoFlash")
                     .font(.largeTitle)
                     .bold()
+
+                Text("Use one login for both admin and user accounts. After sign in, the app opens the correct dashboard automatically.")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, 24)
                 
                 VStack(spacing: 15) {
                     TextField("Email", text: $email)
