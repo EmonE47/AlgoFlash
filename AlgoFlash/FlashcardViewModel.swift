@@ -62,6 +62,6 @@ class FlashcardViewModel: ObservableObject {
 
     private func saveFavourites() {
         guard let uid = userID else { return }
-        FirestoreService.shared.saveFavourites(userId: uid, favouriteIDs: Array(favouriteIDs)) { _ in }
+        FirestoreService.shared.updateFavourites(userId: uid, ids: Array(favouriteIDs)) { _ in }
     }
 }

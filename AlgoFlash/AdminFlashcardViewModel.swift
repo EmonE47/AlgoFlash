@@ -11,7 +11,7 @@ class AdminFlashcardViewModel: ObservableObject {
         isLoading = true
         FirestoreService.shared.fetchAlgorithms { [weak self] algorithms in
             Task { @MainActor in
-                self?.algorithms = algorithms.sorted { $0.id < $1.id }
+                self?.algorithms = algorithms
                 self?.isLoading = false
             }
         }
