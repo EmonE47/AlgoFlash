@@ -11,7 +11,7 @@ struct ContentView: View {
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color(.systemBackground))
-            } else if authViewModel.currentRole == "admin" {
+            } else if authViewModel.currentRole == .admin {
                 AdminTabView()
             } else {
                 MainTabView()

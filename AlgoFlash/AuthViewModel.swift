@@ -5,7 +5,7 @@ import FirebaseAuth
 @MainActor
 class AuthViewModel: ObservableObject {
     @Published var userSession: FirebaseAuth.User?
-    @Published var currentRole: String?
+    @Published var currentRole: UserRole?
     @Published var appUser: AppUser?
     @Published var errorMessage: String = ""
     @Published var isLoading: Bool = false
@@ -39,16 +39,18 @@ class AuthViewModel: ObservableObject {
     }
     
     func fetchCurrentUser(userId: String) {
+        currentRole = nil
         FirestoreService.shared.fetchUser(userId: userId) { [weak self] user in
             Task { @MainActor in
                 self?.appUser = user
-                self?.currentRole = user?.role ?? "user"
+                self?.currentRole = user?.userRole ?? .user
             }
         }
     }
     
     func login(email: String, password: String) {
         isLoading = true
+        currentRole = nil
         AuthService.shared.signIn(email: email, password: password) { [weak self] result, error in
             Task { @MainActor in
                 self?.isLoading = false
@@ -62,8 +64,9 @@ class AuthViewModel: ObservableObject {
         }
     }
     
-    func register(email: String, password: String, fullName: String) {
+    func register(email: String, password: String, fullName: String, role: UserRole) {
         isLoading = true
+        currentRole = nil
         AuthService.shared.signUp(email: email, password: password) { [weak self] result, error in
             if let error = error {
                 Task { @MainActor in
@@ -82,7 +85,7 @@ class AuthViewModel: ObservableObject {
                 return
             }
             
-            FirestoreService.shared.saveUser(id: uid, email: email, fullName: fullName, role: "user") { error in
+            FirestoreService.shared.saveUser(id: uid, email: email, fullName: fullName, role: role.rawValue) { error in
                 Task { @MainActor in
                     self?.isLoading = false
                     if let error = error {
