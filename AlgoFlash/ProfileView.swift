@@ -10,16 +10,10 @@ struct ProfileView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 24) {
-                    // Avatar + name
                     avatarSection
-
-                    // Stats cards
                     statsSection
-
-                    // Account info
                     accountSection
 
-                    // Logout
                     Button(role: .destructive) {
                         authViewModel.logOut()
                     } label: {
@@ -43,8 +37,6 @@ struct ProfileView: View {
             }
         }
     }
-
-    // MARK: - Sections
 
     private var avatarSection: some View {
         VStack(spacing: 10) {
@@ -104,9 +96,9 @@ struct ProfileView: View {
                 .padding(.bottom, 8)
 
             VStack(spacing: 0) {
-                InfoRow(label: "Full Name", value: profileVM.appUser?.fullName ?? "—")
+                InfoRow(label: "Full Name", value: profileVM.appUser?.fullName ?? "-")
                 Divider().padding(.leading, 16)
-                InfoRow(label: "Email", value: profileVM.appUser?.email ?? Auth.auth().currentUser?.email ?? "—")
+                InfoRow(label: "Email", value: profileVM.appUser?.email ?? Auth.auth().currentUser?.email ?? "-")
             }
             .background(Color(.systemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 12))
@@ -126,8 +118,6 @@ struct ProfileView: View {
         return "AF"
     }
 }
-
-// MARK: - Sub-views
 
 struct StatCard: View {
     let title: String

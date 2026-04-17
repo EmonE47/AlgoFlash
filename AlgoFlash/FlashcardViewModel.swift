@@ -7,6 +7,7 @@ class FlashcardViewModel: ObservableObject {
     @Published var algorithms: [Algorithm] = []
     @Published var favouriteIDs: Set<Int> = []
     @Published var selectedCategory: String = "All"
+    @Published var isLoading: Bool = false
 
     let categories = ["All", "Searching", "Sorting", "Graph", "Dynamic Programming"]
 
@@ -23,8 +24,18 @@ class FlashcardViewModel: ObservableObject {
     private var userID: String? { Auth.auth().currentUser?.uid }
 
     init() {
-        algorithms = JSONLoader.loadAlgorithms()
+        loadAlgorithms()
         fetchFavourites()
+    }
+
+    func loadAlgorithms() {
+        isLoading = true
+        FirestoreService.shared.fetchAlgorithms { [weak self] algorithms in
+            Task { @MainActor in
+                self?.algorithms = algorithms
+                self?.isLoading = false
+            }
+        }
     }
 
     func toggleFavourite(_ algorithm: Algorithm) {
@@ -51,6 +62,6 @@ class FlashcardViewModel: ObservableObject {
 
     private func saveFavourites() {
         guard let uid = userID else { return }
-        FirestoreService.shared.saveFavourites(userId: uid, favouriteIDs: Array(favouriteIDs)) { _ in }
+        FirestoreService.shared.updateFavourites(userId: uid, ids: Array(favouriteIDs)) { _ in }
     }
 }
