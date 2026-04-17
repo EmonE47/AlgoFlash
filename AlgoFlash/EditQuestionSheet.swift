@@ -79,6 +79,7 @@ struct EditQuestionSheet: View {
         
         let updatedQuestion = QuizQuestion(
             id: question.id,
+            documentID: question.documentID,
             algorithmId: algorithmId,
             question: questionText,
             options: options,
@@ -98,5 +99,5 @@ extension Array {
 }
 
 #Preview {
-    EditQuestionSheet(viewModel: AdminQuizViewModel(), question: QuizQuestion(id: 1, algorithmId: 1, question: "Test?", options: ["A", "B", "C", "D"], correctIndex: 0, explanation: "Explanation"))
+    EditQuestionSheet(viewModel: AdminQuizViewModel(), question: QuizQuestion(id: 1, documentID: "preview", algorithmId: 1, question: "Test?", options: ["A", "B", "C", "D"], correctIndex: 0, explanation: "Explanation"))
 }

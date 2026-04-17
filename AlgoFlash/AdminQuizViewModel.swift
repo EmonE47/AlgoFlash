@@ -11,7 +11,7 @@ class AdminQuizViewModel: ObservableObject {
         isLoading = true
         FirestoreService.shared.fetchQuizQuestions { [weak self] questions in
             Task { @MainActor in
-                self?.questions = questions.sorted { $0.id < $1.id }
+                self?.questions = questions
                 self?.isLoading = false
             }
         }
@@ -34,7 +34,7 @@ class AdminQuizViewModel: ObservableObject {
 
     func update(question: QuizQuestion) {
         isLoading = true
-        FirestoreService.shared.updateQuizQuestion(questionId: question.id, question: question) { [weak self] error in
+        FirestoreService.shared.updateQuizQuestion(question: question) { [weak self] error in
             Task { @MainActor in
                 self?.isLoading = false
                 if let error = error {
@@ -47,9 +47,9 @@ class AdminQuizViewModel: ObservableObject {
         }
     }
 
-    func delete(questionId: Int) {
+    func delete(question: QuizQuestion) {
         isLoading = true
-        FirestoreService.shared.deleteQuizQuestion(questionId: questionId) { [weak self] error in
+        FirestoreService.shared.deleteQuizQuestion(question: question) { [weak self] error in
             Task { @MainActor in
                 self?.isLoading = false
                 if let error = error {

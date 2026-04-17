@@ -68,6 +68,7 @@ struct AddQuestionSheet: View {
         
         let question = QuizQuestion(
             id: newId,
+            documentID: nil,
             algorithmId: algorithmId,
             question: self.question,
             options: options,

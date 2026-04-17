@@ -38,7 +38,7 @@ struct ManageQuizView: View {
                             }
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button(role: .destructive) {
-                                    viewModel.delete(questionId: question.id)
+                                    viewModel.delete(question: question)
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
