@@ -91,7 +91,7 @@ class QuizViewModel: ObservableObject {
     }
 
     deinit {
-        stopTimer()
+        timer?.invalidate()
     }
 
     var currentQuestion: QuizQuestion? {
