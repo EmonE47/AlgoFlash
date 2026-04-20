@@ -5,91 +5,125 @@ struct ProfileView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
     @EnvironmentObject var flashcardVM: FlashcardViewModel
     @StateObject private var profileVM = ProfileViewModel()
+    @State private var showingLogoutConfirmation = false
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    avatarSection
-                    statsSection
-                    ProfileActionsSection(viewModel: profileVM) {
-                        if let uid = profileVM.appUser?.id {
-                            authViewModel.fetchCurrentUser(userId: uid)
+            ZStack {
+                AppBackground()
+
+                ScrollView {
+                    VStack(spacing: 0) {
+                        heroHeader
+
+                        VStack(spacing: 24) {
+                            statsSection
+                                .offset(y: -28)
+                                .padding(.bottom, -28)
+
+                            ProfileActionsSection(viewModel: profileVM) {
+                                if let uid = profileVM.appUser?.id {
+                                    authViewModel.fetchCurrentUser(userId: uid)
+                                }
+                            }
+
+                            AlgoButton(title: "Log Out", icon: "rectangle.portrait.and.arrow.right", style: .danger) {
+                                showingLogoutConfirmation = true
+                            }
+                            .padding(.horizontal, 20)
+                            .padding(.bottom, 24)
                         }
                     }
-
-                    Button(role: .destructive) {
-                        authViewModel.logOut()
-                    } label: {
-                        Label("Log Out", systemImage: "rectangle.portrait.and.arrow.right")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color(.systemGray6))
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 20)
                 }
-                .padding(.top, 20)
-            }
-            .navigationTitle("Profile")
-            .onAppear { profileVM.fetchProfile() }
-            .overlay {
+                .ignoresSafeArea(edges: .top)
+
                 if profileVM.isLoading {
                     ProgressView()
+                        .padding(18)
+                        .background(.thinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 }
             }
+            .navigationTitle("Profile")
+            .navigationBarTitleDisplayMode(.inline)
+            .onAppear { profileVM.fetchProfile() }
         }
+        .confirmationDialog(
+            "Log Out",
+            isPresented: $showingLogoutConfirmation,
+            actions: {
+                Button("Log Out", role: .destructive) {
+                    authViewModel.logOut()
+                }
+                Button("Cancel", role: .cancel) { }
+            },
+            message: {
+                Text("Are you sure you want to log out?")
+            }
+        )
     }
 
-    private var avatarSection: some View {
-        VStack(spacing: 10) {
-            ZStack {
-                Circle()
-                    .fill(LinearGradient(colors: [.blue, .purple], startPoint: .topLeading, endPoint: .bottomTrailing))
-                    .frame(width: 90, height: 90)
-                Text(initials)
-                    .font(.system(size: 34, weight: .bold))
-                    .foregroundColor(.white)
+    private var heroHeader: some View {
+        ZStack(alignment: .bottom) {
+            BrandGradient(colors: [Color.brandDark, Color.brand, Color.brandLight])
+                .frame(height: 245)
+
+            VStack(spacing: 10) {
+                ZStack {
+                    Circle()
+                        .fill(Color.white.opacity(0.18))
+                        .frame(width: 104, height: 104)
+                    Circle()
+                        .stroke(Color.white.opacity(0.72), lineWidth: 3)
+                        .frame(width: 104, height: 104)
+                    Text(initials)
+                        .font(.system(size: 36, weight: .bold))
+                        .foregroundStyle(.white)
+                }
+
+                Text(profileVM.appUser?.fullName ?? Auth.auth().currentUser?.email ?? "User")
+                    .font(.title2.bold())
+                    .foregroundStyle(.white)
+
+                Text(profileVM.appUser?.email ?? Auth.auth().currentUser?.email ?? "")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.75))
+
+                Label("Student", systemImage: "graduationcap.fill")
+                    .font(.caption.weight(.bold))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .foregroundStyle(.white)
+                    .background(.white.opacity(0.16))
+                    .clipShape(Capsule())
             }
-
-            Text(profileVM.appUser?.fullName ?? Auth.auth().currentUser?.email ?? "User")
-                .font(.title2.bold())
-
-            Text(profileVM.appUser?.email ?? Auth.auth().currentUser?.email ?? "")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
+            .padding(.bottom, 22)
+            .padding(.top, 48)
         }
     }
 
     private var statsSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text("Progress")
-                .font(.headline)
-                .padding(.horizontal, 20)
-
-            HStack(spacing: 12) {
-                StatCard(
-                    title: "Best Score",
-                    value: "\(profileVM.appUser?.score ?? 0)",
-                    icon: "star.fill",
-                    color: .yellow
-                )
-                StatCard(
-                    title: "Quizzes Taken",
-                    value: "\(profileVM.appUser?.quizzesTaken ?? 0)",
-                    icon: "checkmark.circle.fill",
-                    color: .green
-                )
-                StatCard(
-                    title: "Favourites",
-                    value: "\(flashcardVM.favouriteIDs.count)",
-                    icon: "heart.fill",
-                    color: .red
-                )
-            }
-            .padding(.horizontal, 20)
+        HStack(spacing: 12) {
+            StatCard(
+                title: "Best Score",
+                value: "\(profileVM.appUser?.score ?? 0)",
+                icon: "star.fill",
+                color: Color.warning
+            )
+            StatCard(
+                title: "Quizzes",
+                value: "\(profileVM.appUser?.quizzesTaken ?? 0)",
+                icon: "checkmark.circle.fill",
+                color: Color.success
+            )
+            StatCard(
+                title: "Favourites",
+                value: "\(flashcardVM.favouriteIDs.count)",
+                icon: "heart.fill",
+                color: Color.danger
+            )
         }
+        .padding(.horizontal, 20)
     }
 
     private var initials: String {
@@ -111,21 +145,32 @@ struct StatCard: View {
     let color: Color
 
     var body: some View {
-        VStack(spacing: 8) {
+        VStack(alignment: .leading, spacing: 10) {
+            Rectangle()
+                .fill(color)
+                .frame(height: 3)
+                .clipShape(Capsule())
+
             Image(systemName: icon)
-                .font(.title2)
-                .foregroundColor(color)
+                .font(.title3)
+                .foregroundStyle(color)
+
             Text(value)
                 .font(.title2.bold())
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
+
             Text(title)
                 .font(.caption)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
+                .foregroundStyle(.secondary)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
-        .background(Color(.systemGray6))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(14)
+        .background(Color.surface0)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 6)
     }
 }
 
@@ -136,10 +181,10 @@ struct InfoRow: View {
     var body: some View {
         HStack {
             Text(label)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
             Spacer()
             Text(value)
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
                 .multilineTextAlignment(.trailing)
         }
         .padding(.horizontal, 16)
@@ -156,65 +201,49 @@ struct ProfileActionsSection: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Manage Account")
-                .font(.headline)
+            SectionHeader(title: "Account Settings", subtitle: "Keep your profile details current.")
                 .padding(.horizontal, 20)
 
             VStack(spacing: 14) {
-                TextField("Full Name", text: $fullName)
-                    .textInputAutocapitalization(.words)
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                AlgoTextField(placeholder: "Full Name", text: $fullName, icon: "person.text.rectangle")
 
-                Button {
+                AlgoButton(title: "Update Name", icon: "checkmark.circle", style: .secondary, isLoading: viewModel.isLoading) {
                     viewModel.updateName(fullName) {
                         onProfileChanged?()
                     }
-                } label: {
-                    Label("Update Name", systemImage: "person.text.rectangle")
-                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.borderedProminent)
                 .disabled(viewModel.isLoading || fullName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
 
                 Divider()
 
-                TextField("Email", text: $email)
-                    .textInputAutocapitalization(.never)
-                    .keyboardType(.emailAddress)
-                    .autocorrectionDisabled()
-                    .padding()
-                    .background(Color(.systemGray6))
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
+                AlgoTextField(
+                    placeholder: "Email",
+                    text: $email,
+                    icon: "envelope",
+                    keyboardType: .emailAddress
+                )
 
-                Button {
+                AlgoButton(title: "Update Email", icon: "envelope.badge", style: .ghost, isLoading: viewModel.isLoading) {
                     viewModel.updateEmail(email)
-                } label: {
-                    Label("Update Email", systemImage: "envelope")
-                        .frame(maxWidth: .infinity)
                 }
-                .buttonStyle(.bordered)
                 .disabled(viewModel.isLoading || email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
 
                 if !viewModel.errorMessage.isEmpty {
-                    Text(viewModel.errorMessage)
-                        .font(.footnote)
-                        .foregroundColor(.red)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    MessageBanner(text: viewModel.errorMessage, color: Color.danger)
                 }
 
                 if !viewModel.successMessage.isEmpty {
-                    Text(viewModel.successMessage)
-                        .font(.footnote)
-                        .foregroundColor(.green)
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                    MessageBanner(text: viewModel.successMessage, color: Color.success)
                 }
             }
             .padding(16)
-            .background(Color(.systemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color(.systemGray5)))
+            .background(Color.surface0)
+            .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+            .overlay(
+                RoundedRectangle(cornerRadius: 18, style: .continuous)
+                    .stroke(Color.secondary.opacity(0.10), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.06), radius: 12, x: 0, y: 6)
             .padding(.horizontal, 20)
         }
         .onAppear(perform: seedFields)
@@ -229,5 +258,20 @@ struct ProfileActionsSection: View {
     private func seedFields() {
         fullName = viewModel.appUser?.fullName ?? ""
         email = viewModel.appUser?.email ?? Auth.auth().currentUser?.email ?? ""
+    }
+}
+
+private struct MessageBanner: View {
+    let text: String
+    let color: Color
+
+    var body: some View {
+        Text(text)
+            .font(.footnote)
+            .foregroundStyle(color)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(10)
+            .background(color.opacity(0.10))
+            .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
     }
 }

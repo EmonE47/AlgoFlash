@@ -46,6 +46,9 @@ struct EditAlgorithmSheet: View {
                         .lineLimit(4...8)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(AppBackground())
+            .tint(Color.warning)
             .navigationTitle("Edit Flashcard")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

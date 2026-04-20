@@ -46,6 +46,9 @@ struct EditQuestionSheet: View {
                         .lineLimit(3...6)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(AppBackground())
+            .tint(Color.warning)
             .navigationTitle("Edit Question")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

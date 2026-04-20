@@ -5,24 +5,24 @@ struct HomeView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 30) {
-                Text("Welcome to AlgoFlash!")
-                    .font(.largeTitle)
-                    .bold()
-                
-                Text("Your flashcards and quizzes will appear here.")
-                    .foregroundColor(.gray)
-                
-                // Placeholder buttons for future features
-                Button("Start Flashcards") {
-                    // Action
+            ZStack {
+                AppBackground()
+
+                VStack(spacing: 22) {
+                    Image(systemName: "bolt.fill")
+                        .font(.system(size: 58, weight: .bold))
+                        .foregroundStyle(LinearGradient(colors: [Color.brand, Color.brandLight], startPoint: .top, endPoint: .bottom))
+
+                    Text("Welcome to AlgoFlash")
+                        .font(.largeTitle.bold())
+
+                    Text("Your flashcards and quizzes are available from the tabs.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 30)
                 }
-                .buttonStyle(.borderedProminent)
-                
-                Button("Start Quiz") {
-                    // Action
-                }
-                .buttonStyle(.bordered)
+                .padding(24)
             }
             .navigationTitle("Home")
             .toolbar {

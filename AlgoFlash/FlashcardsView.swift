@@ -10,91 +10,78 @@ struct FlashcardsView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // Category filter
-                categoryPicker
+            ZStack {
+                AppBackground()
 
-                if cards.isEmpty {
-                    Spacer()
-                    Text("No algorithms in this category.")
-                        .foregroundColor(.secondary)
-                    Spacer()
-                } else {
-                    // Card counter
-                    Text("\(min(currentIndex + 1, cards.count)) / \(cards.count)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding(.top, 8)
+                VStack(spacing: 0) {
+                    categoryPicker
 
-                    Spacer()
+                    if cards.isEmpty {
+                        EmptyStateView(
+                            icon: "square.stack.3d.up.slash",
+                            title: "No Algorithms",
+                            subtitle: "Try another category or ask an admin to add flashcards."
+                        )
+                    } else {
+                        progressLozenge
+                            .padding(.top, 8)
 
-                    // Flashcard
-                    ZStack {
-                        // Shadow card behind
-                        if safeCurrentIndex + 1 < cards.count {
-                            FlashCard(algorithm: cards[safeCurrentIndex + 1], isFlipped: .constant(false))
-                                .scaleEffect(0.95)
-                                .offset(y: 10)
-                        }
+                        Spacer()
 
-                        FlashCard(algorithm: cards[safeCurrentIndex], isFlipped: $isFlipped)
-                            .offset(x: safeDragOffset)
-                            .rotationEffect(.degrees(Double(safeDragOffset) / 20))
-                            .gesture(
-                                DragGesture()
-                                    .onChanged { value in
-                                        let width = value.translation.width
-                                        dragOffset = width.isFinite ? width.clamped(to: -240...240) : 0
-                                    }
-                                    .onEnded { value in
-                                        handleSwipe(value.translation.width)
-                                    }
-                            )
-                            .overlay(alignment: .topTrailing) {
-                                Button {
-                                    vm.toggleFavourite(cards[safeCurrentIndex])
-                                } label: {
-                                    Image(systemName: vm.isFavourite(cards[safeCurrentIndex]) ? "heart.fill" : "heart")
-                                        .font(.title2)
-                                        .foregroundColor(vm.isFavourite(cards[safeCurrentIndex]) ? .red : .gray)
-                                        .padding(20)
-                                }
+                        ZStack {
+                            if safeCurrentIndex + 1 < cards.count {
+                                FlashCard(algorithm: cards[safeCurrentIndex + 1], isFlipped: .constant(false))
+                                    .scaleEffect(0.94)
+                                    .offset(y: 16)
+                                    .opacity(0.42)
+                                    .allowsHitTesting(false)
                             }
-                    }
-                    .padding(.horizontal, 24)
 
-                    // Tap hint
-                    Text("Tap card to flip • Swipe to navigate")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                        .padding(.top, 12)
-
-                    Spacer()
-
-                    // Navigation arrows
-                    HStack(spacing: 48) {
-                        Button {
-                            navigate(by: -1)
-                        } label: {
-                            Image(systemName: "arrow.left.circle.fill")
-                                .font(.largeTitle)
-                                .foregroundColor(currentIndex > 0 ? .blue : .gray.opacity(0.3))
+                            FlashCard(algorithm: cards[safeCurrentIndex], isFlipped: $isFlipped)
+                                .offset(x: safeDragOffset)
+                                .rotationEffect(.degrees(Double(safeDragOffset) / 20))
+                                .gesture(
+                                    DragGesture()
+                                        .onChanged { value in
+                                            let width = value.translation.width
+                                            dragOffset = width.isFinite ? width.clamped(to: -240...240) : 0
+                                        }
+                                        .onEnded { value in
+                                            handleSwipe(value.translation.width)
+                                        }
+                                )
+                                .overlay(alignment: .topTrailing) {
+                                    Button {
+                                        HapticManager.impact(.medium)
+                                        vm.toggleFavourite(cards[safeCurrentIndex])
+                                    } label: {
+                                        Image(systemName: vm.isFavourite(cards[safeCurrentIndex]) ? "heart.fill" : "heart")
+                                            .font(.title2)
+                                            .foregroundStyle(vm.isFavourite(cards[safeCurrentIndex]) ? Color.danger : Color.white.opacity(0.82))
+                                            .frame(width: 52, height: 52)
+                                            .background(.ultraThinMaterial)
+                                            .clipShape(Circle())
+                                            .padding(18)
+                                    }
+                                    .accessibilityLabel(vm.isFavourite(cards[safeCurrentIndex]) ? "Remove favourite" : "Add favourite")
+                                }
                         }
-                        .disabled(currentIndex == 0)
+                        .padding(.horizontal, 24)
 
-                        Button {
-                            navigate(by: 1)
-                        } label: {
-                            Image(systemName: "arrow.right.circle.fill")
-                                .font(.largeTitle)
-                                .foregroundColor(currentIndex < cards.count - 1 ? .blue : .gray.opacity(0.3))
-                        }
-                        .disabled(currentIndex == cards.count - 1)
+                        Text("Tap to flip. Swipe to navigate.")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .padding(.top, 12)
+
+                        Spacer()
+
+                        navigationControls
+                            .padding(.bottom, 24)
                     }
-                    .padding(.bottom, 24)
                 }
             }
             .navigationTitle("Flashcards")
+            .navigationBarTitleDisplayMode(.large)
             .onChange(of: vm.selectedCategory) { _ in
                 currentIndex = 0
                 isFlipped = false
@@ -115,20 +102,71 @@ struct FlashcardsView: View {
     private var categoryPicker: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 10) {
-                ForEach(vm.categories, id: \.self) { cat in
-                    Button(cat) {
-                        vm.selectedCategory = cat
+                ForEach(vm.categories, id: \.self) { category in
+                    CategoryPill(title: category, isSelected: vm.selectedCategory == category) {
+                        vm.selectedCategory = category
                     }
-                    .font(.subheadline.weight(.medium))
-                    .padding(.horizontal, 14)
-                    .padding(.vertical, 7)
-                    .background(vm.selectedCategory == cat ? Color.blue : Color(.systemGray5))
-                    .foregroundColor(vm.selectedCategory == cat ? .white : .primary)
-                    .clipShape(Capsule())
                 }
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+            .padding(.vertical, 12)
+        }
+    }
+
+    private var progressLozenge: some View {
+        HStack(spacing: 10) {
+            Text("\(min(currentIndex + 1, cards.count)) of \(cards.count)")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+
+            HStack(spacing: 6) {
+                ForEach(0..<min(cards.count, 7), id: \.self) { index in
+                    Capsule()
+                        .fill(index == min(currentIndex, 6) ? Color.brand : Color.secondary.opacity(0.25))
+                        .frame(width: index == min(currentIndex, 6) ? 20 : 6, height: 6)
+                        .animation(Motion.spring, value: currentIndex)
+                }
+
+                if cards.count > 7 {
+                    Text("...")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 8)
+        .background(.thinMaterial)
+        .clipShape(Capsule())
+    }
+
+    private var navigationControls: some View {
+        HStack(spacing: 56) {
+            Button {
+                navigate(by: -1)
+            } label: {
+                Image(systemName: "chevron.left")
+                    .font(.title2.weight(.bold))
+                    .foregroundStyle(currentIndex > 0 ? Color.brand : Color.secondary.opacity(0.45))
+                    .frame(width: 56, height: 56)
+                    .background(.ultraThinMaterial)
+                    .clipShape(Circle())
+            }
+            .disabled(currentIndex == 0)
+            .accessibilityLabel("Previous flashcard")
+
+            Button {
+                navigate(by: 1)
+            } label: {
+                Image(systemName: "chevron.right")
+                    .font(.title2.weight(.bold))
+                    .foregroundStyle(currentIndex < cards.count - 1 ? Color.brand : Color.secondary.opacity(0.45))
+                    .frame(width: 56, height: 56)
+                    .background(.ultraThinMaterial)
+                    .clipShape(Circle())
+            }
+            .disabled(currentIndex == cards.count - 1)
+            .accessibilityLabel("Next flashcard")
         }
     }
 
@@ -142,7 +180,8 @@ struct FlashcardsView: View {
     }
 
     private func navigate(by delta: Int) {
-        withAnimation(.spring(response: 0.3)) {
+        HapticManager.impact()
+        withAnimation(Motion.spring) {
             let next = currentIndex + delta
             guard next >= 0, next < cards.count else { return }
             currentIndex = next
@@ -153,8 +192,10 @@ struct FlashcardsView: View {
     private func handleSwipe(_ width: CGFloat) {
         let threshold: CGFloat = 80
         let safeWidth = width.isFinite ? width : 0
+
         if safeWidth < -threshold {
-            withAnimation(.spring(response: 0.3)) {
+            HapticManager.impact()
+            withAnimation(Motion.spring) {
                 if currentIndex < cards.count - 1 {
                     currentIndex += 1
                     isFlipped = false
@@ -162,7 +203,8 @@ struct FlashcardsView: View {
                 dragOffset = 0
             }
         } else if safeWidth > threshold {
-            withAnimation(.spring(response: 0.3)) {
+            HapticManager.impact()
+            withAnimation(Motion.spring) {
                 if currentIndex > 0 {
                     currentIndex -= 1
                     isFlipped = false
@@ -170,12 +212,10 @@ struct FlashcardsView: View {
                 dragOffset = 0
             }
         } else {
-            withAnimation(.spring(response: 0.3)) { dragOffset = 0 }
+            withAnimation(Motion.spring) { dragOffset = 0 }
         }
     }
 }
-
-// MARK: - Flash Card
 
 struct FlashCard: View {
     let algorithm: Algorithm
@@ -189,102 +229,126 @@ struct FlashCard: View {
                 backFace
             }
         }
-        .frame(height: 340)
-        .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 20))
-        .shadow(color: .black.opacity(0.12), radius: 12, x: 0, y: 6)
+        .frame(height: 360)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .shadow(color: categoryGradient(algorithm.category).0.opacity(0.24), radius: 26, x: 0, y: 14)
         .rotation3DEffect(
             .degrees(isFlipped ? 180 : 0),
             axis: (x: 0, y: 1, z: 0),
             perspective: 0.5
         )
         .onTapGesture {
-            withAnimation(.spring(response: 0.4)) {
+            HapticManager.impact(.medium)
+            withAnimation(Motion.flip) {
                 isFlipped.toggle()
             }
         }
     }
 
     private var frontFace: some View {
-        VStack(spacing: 16) {
-            difficultyBadge
+        let gradient = categoryGradient(algorithm.category)
 
-            Text(algorithm.title)
-                .font(.title.bold())
-                .multilineTextAlignment(.center)
+        return ZStack {
+            LinearGradient(colors: [gradient.0, gradient.1], startPoint: .topLeading, endPoint: .bottomTrailing)
 
-            Text(algorithm.category)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 5)
-                .background(Color(.systemGray6))
-                .clipShape(Capsule())
+            VStack(spacing: 18) {
+                HStack {
+                    Text(algorithm.difficulty)
+                        .font(.caption.weight(.bold))
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .background(difficultyColor(algorithm.difficulty).opacity(0.28))
+                        .foregroundStyle(.white)
+                        .clipShape(Capsule())
+                    Spacer()
+                }
 
-            Spacer()
+                Spacer()
 
-            Text("Tap to see details")
-                .font(.caption)
-                .foregroundColor(.secondary)
+                Text(algorithm.title)
+                    .font(.title.bold())
+                    .foregroundStyle(.white)
+                    .multilineTextAlignment(.center)
+                    .minimumScaleFactor(0.78)
+
+                Text(algorithm.category)
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(.white.opacity(0.9))
+                    .padding(.horizontal, 14)
+                    .padding(.vertical, 7)
+                    .background(.white.opacity(0.18))
+                    .clipShape(Capsule())
+
+                Spacer()
+
+                Text("Tap to flip")
+                    .font(.caption.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.70))
+            }
+            .padding(26)
         }
-        .padding(24)
         .rotation3DEffect(.degrees(0), axis: (x: 0, y: 1, z: 0))
     }
 
     private var backFace: some View {
-        VStack(alignment: .leading, spacing: 14) {
-            Label(algorithm.timeComplexity, systemImage: "clock")
-                .font(.headline)
-                .foregroundColor(.blue)
+        let gradient = categoryGradient(algorithm.category)
 
-            Divider()
+        return ZStack {
+            LinearGradient(colors: [gradient.0, gradient.1], startPoint: .topLeading, endPoint: .bottomTrailing)
 
-            Text("Definition")
-                .font(.caption.weight(.semibold))
-                .foregroundColor(.secondary)
-            Text(algorithm.definition)
-                .font(.subheadline)
-                .lineLimit(5)
-                .minimumScaleFactor(0.85)
+            VStack(alignment: .leading, spacing: 14) {
+                Label(algorithm.timeComplexity, systemImage: "clock.fill")
+                    .font(.headline)
+                    .foregroundStyle(.white)
 
-            Divider()
+                Divider()
+                    .overlay(Color.white.opacity(0.3))
 
-            Text("Pseudocode")
-                .font(.caption.weight(.semibold))
-                .foregroundColor(.secondary)
-            Text(algorithm.pseudocode)
-                .font(.system(size: 12, design: .monospaced))
-                .lineLimit(9)
-                .minimumScaleFactor(0.8)
-                .padding(10)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .background(Color(.systemGray6))
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                DetailBlock(title: "Definition") {
+                    Text(algorithm.definition)
+                        .font(.subheadline)
+                        .foregroundStyle(.white.opacity(0.92))
+                        .lineLimit(5)
+                        .minimumScaleFactor(0.85)
+                }
 
-            Spacer(minLength: 0)
+                DetailBlock(title: "Pseudocode") {
+                    Text(algorithm.pseudocode)
+                        .font(.system(size: 12, design: .monospaced))
+                        .foregroundStyle(.white)
+                        .lineLimit(9)
+                        .minimumScaleFactor(0.8)
+                        .padding(10)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .background(Color.black.opacity(0.28))
+                        .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
+                }
+
+                Spacer(minLength: 0)
+            }
+            .padding(24)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            .background(.ultraThinMaterial)
         }
-        .padding(24)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
     }
+}
 
-    private var difficultyBadge: some View {
-        Text(algorithm.difficulty)
-            .font(.caption.weight(.semibold))
-            .padding(.horizontal, 12)
-            .padding(.vertical, 5)
-            .background(difficultyColor.opacity(0.15))
-            .foregroundColor(difficultyColor)
-            .clipShape(Capsule())
-            .frame(maxWidth: .infinity, alignment: .trailing)
+private struct DetailBlock<Content: View>: View {
+    let title: String
+    let content: () -> Content
+
+    init(title: String, @ViewBuilder content: @escaping () -> Content) {
+        self.title = title
+        self.content = content
     }
 
-    private var difficultyColor: Color {
-        switch algorithm.difficulty {
-        case "Easy": return .green
-        case "Medium": return .orange
-        case "Hard": return .red
-        default: return .gray
+    var body: some View {
+        VStack(alignment: .leading, spacing: 6) {
+            Text(title.uppercased())
+                .font(.caption.weight(.bold))
+                .foregroundStyle(.white.opacity(0.65))
+            content()
         }
     }
 }
