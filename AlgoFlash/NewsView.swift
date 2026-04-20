@@ -1,4 +1,5 @@
 import SwiftUI
+import Combine
 
 struct NewsAPIResponse: Decodable {
     let status: String
@@ -294,83 +295,98 @@ struct NewsDetailView: View {
     let article: NewsArticle
 
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 18) {
-                AsyncImage(url: article.imageURL) { phase in
-                    switch phase {
-                    case .empty:
-                        Rectangle()
-                            .fill(Color.blue.opacity(0.12))
-                            .overlay(ProgressView())
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                    case .failure:
-                        NewsImageFallback()
-                    @unknown default:
-                        NewsImageFallback()
-                    }
-                }
-                .frame(height: 260)
-                .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
-                .shadow(color: .black.opacity(0.16), radius: 18, x: 0, y: 10)
-
-                VStack(alignment: .leading, spacing: 10) {
-                    Text(article.source.name.uppercased())
-                        .font(.caption.weight(.bold))
-                        .foregroundColor(.blue)
-
-                    Text(article.title)
-                        .font(.largeTitle.weight(.bold))
-                        .lineSpacing(2)
-
-                    HStack(spacing: 10) {
-                        Text(article.formattedDate)
-                        if let author = article.author, !author.isEmpty {
-                            Text("by \(author)")
-                                .lineLimit(1)
+        GeometryReader { proxy in
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(alignment: .leading, spacing: 18) {
+                    AsyncImage(url: article.imageURL) { phase in
+                        switch phase {
+                        case .empty:
+                            Rectangle()
+                                .fill(Color.blue.opacity(0.12))
+                                .overlay(ProgressView())
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        case .failure:
+                            NewsImageFallback()
+                        @unknown default:
+                            NewsImageFallback()
                         }
                     }
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                }
+                    .frame(width: detailContentWidth(for: proxy.size.width), height: 230)
+                    .clipped()
+                    .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+                    .shadow(color: .black.opacity(0.14), radius: 14, x: 0, y: 8)
 
-                if let description = article.description, !description.isEmpty {
-                    Text(description)
-                        .font(.title3.weight(.medium))
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(article.source.name.uppercased())
+                            .font(.caption.weight(.bold))
+                            .foregroundColor(.blue)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        Text(article.title)
+                            .font(.title.weight(.bold))
+                            .lineSpacing(3)
+                            .fixedSize(horizontal: false, vertical: true)
+
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text(article.formattedDate)
+                            if let author = article.author, !author.isEmpty {
+                                Text("by \(author)")
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                        }
+                        .font(.caption)
                         .foregroundColor(.secondary)
-                        .lineSpacing(4)
-                }
-
-                Text(article.cleanContent)
-                    .font(.body)
-                    .lineSpacing(7)
-
-                if let url = article.articleURL {
-                    Link(destination: url) {
-                        Label("Open Full Article", systemImage: "safari")
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(Color.blue)
-                            .foregroundColor(.white)
-                            .clipShape(RoundedRectangle(cornerRadius: 14))
                     }
-                    .padding(.top, 6)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+
+                    if let description = article.description, !description.isEmpty {
+                        Text(description)
+                            .font(.title3.weight(.medium))
+                            .foregroundColor(.secondary)
+                            .lineSpacing(4)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+
+                    Text(article.cleanContent)
+                        .font(.body)
+                        .lineSpacing(7)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    if let url = article.articleURL {
+                        Link(destination: url) {
+                            Label("Open Full Article", systemImage: "safari")
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.blue)
+                                .foregroundColor(.white)
+                                .clipShape(RoundedRectangle(cornerRadius: 14))
+                        }
+                        .padding(.top, 6)
+                    }
                 }
+                .frame(width: detailContentWidth(for: proxy.size.width), alignment: .leading)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 18)
             }
-            .padding(18)
-        }
-        .background(
-            LinearGradient(
-                colors: [Color(.systemBackground), Color.blue.opacity(0.08)],
-                startPoint: .top,
-                endPoint: .bottom
+            .scrollDisabled(false)
+            .background(
+                LinearGradient(
+                    colors: [Color(.systemBackground), Color.blue.opacity(0.08)],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
             )
-            .ignoresSafeArea()
-        )
-        .navigationTitle("Read")
-        .navigationBarTitleDisplayMode(.inline)
+            .navigationTitle("Read")
+            .navigationBarTitleDisplayMode(.inline)
+        }
+    }
+
+    private func detailContentWidth(for screenWidth: CGFloat) -> CGFloat {
+        max(0, screenWidth - 32)
     }
 }
 
