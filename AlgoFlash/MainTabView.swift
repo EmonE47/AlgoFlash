@@ -23,6 +23,11 @@ struct MainTabView: View {
                     Label("Quiz", systemImage: "questionmark.circle.fill")
                 }
 
+            NewsView()
+                .tabItem {
+                    Label("News", systemImage: "newspaper.fill")
+                }
+
             ProfileView()
                 .environmentObject(flashcardVM)
                 .tabItem {
