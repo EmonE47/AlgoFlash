@@ -209,17 +209,13 @@ struct ProfileActionsSection: View {
                     .clipShape(RoundedRectangle(cornerRadius: 10))
 
                 Button {
-                    viewModel.requestEmailUpdate(email)
+                    viewModel.updateEmail(email)
                 } label: {
                     Label("Update Email", systemImage: "envelope")
                         .frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.bordered)
                 .disabled(viewModel.isLoading || email.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
-
-                Text("Email changes require verification. Check the new address inbox after tapping Update Email.")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
 
                 if !viewModel.errorMessage.isEmpty {
                     Text(viewModel.errorMessage)

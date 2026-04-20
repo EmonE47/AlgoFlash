@@ -69,7 +69,12 @@ class ProfileViewModel: ObservableObject {
         }
     }
 
-    func requestEmailUpdate(_ email: String, completion: (() -> Void)? = nil) {
+    func updateEmail(_ email: String, completion: (() -> Void)? = nil) {
+        guard let uid = Auth.auth().currentUser?.uid else {
+            errorMessage = "No signed-in user found."
+            return
+        }
+
         let trimmedEmail = email.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedEmail.isEmpty else {
             errorMessage = "Email cannot be empty."
@@ -81,17 +86,28 @@ class ProfileViewModel: ObservableObject {
         errorMessage = ""
         successMessage = ""
 
-        AuthService.shared.sendEmailUpdateVerification(newEmail: trimmedEmail) { [weak self] error in
-            Task { @MainActor in
-                guard let self else { return }
-                self.isLoading = false
-                if let error {
-                    self.errorMessage = error.localizedDescription
-                    return
+        AuthService.shared.updateEmail(trimmedEmail) { [weak self] authError in
+            if let authError {
+                Task { @MainActor in
+                    self?.isLoading = false
+                    self?.errorMessage = authError.localizedDescription
                 }
+                return
+            }
 
-                self.successMessage = "Verification email sent. Open the link in that email to finish updating your address."
-                completion?()
+            FirestoreService.shared.updateUserEmail(userId: uid, email: trimmedEmail) { firestoreError in
+                Task { @MainActor in
+                    guard let self else { return }
+                    self.isLoading = false
+                    if let firestoreError {
+                        self.errorMessage = firestoreError.localizedDescription
+                        return
+                    }
+
+                    self.successMessage = "Email updated."
+                    self.fetchProfile()
+                    completion?()
+                }
             }
         }
     }

@@ -31,13 +31,13 @@ class AuthService {
         changeRequest.commitChanges(completion: completion)
     }
 
-    func sendEmailUpdateVerification(newEmail: String, completion: @escaping (Error?) -> Void) {
+    func updateEmail(_ email: String, completion: @escaping (Error?) -> Void) {
         guard let user = Auth.auth().currentUser else {
             completion(AuthServiceError.noCurrentUser)
             return
         }
 
-        user.sendEmailVerification(beforeUpdatingEmail: newEmail, completion: completion)
+        user.updateEmail(to: email, completion: completion)
     }
 
 }
