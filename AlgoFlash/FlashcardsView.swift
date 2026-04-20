@@ -31,19 +31,20 @@ struct FlashcardsView: View {
                     // Flashcard
                     ZStack {
                         // Shadow card behind
-                        if currentIndex + 1 < cards.count {
-                            FlashCard(algorithm: cards[currentIndex + 1], isFlipped: .constant(false))
+                        if safeCurrentIndex + 1 < cards.count {
+                            FlashCard(algorithm: cards[safeCurrentIndex + 1], isFlipped: .constant(false))
                                 .scaleEffect(0.95)
                                 .offset(y: 10)
                         }
 
-                        FlashCard(algorithm: cards[currentIndex], isFlipped: $isFlipped)
-                            .offset(x: dragOffset)
-                            .rotationEffect(.degrees(Double(dragOffset) / 20))
+                        FlashCard(algorithm: cards[safeCurrentIndex], isFlipped: $isFlipped)
+                            .offset(x: safeDragOffset)
+                            .rotationEffect(.degrees(Double(safeDragOffset) / 20))
                             .gesture(
                                 DragGesture()
                                     .onChanged { value in
-                                        dragOffset = value.translation.width
+                                        let width = value.translation.width
+                                        dragOffset = width.isFinite ? width.clamped(to: -240...240) : 0
                                     }
                                     .onEnded { value in
                                         handleSwipe(value.translation.width)
@@ -51,11 +52,11 @@ struct FlashcardsView: View {
                             )
                             .overlay(alignment: .topTrailing) {
                                 Button {
-                                    vm.toggleFavourite(cards[currentIndex])
+                                    vm.toggleFavourite(cards[safeCurrentIndex])
                                 } label: {
-                                    Image(systemName: vm.isFavourite(cards[currentIndex]) ? "heart.fill" : "heart")
+                                    Image(systemName: vm.isFavourite(cards[safeCurrentIndex]) ? "heart.fill" : "heart")
                                         .font(.title2)
-                                        .foregroundColor(vm.isFavourite(cards[currentIndex]) ? .red : .gray)
+                                        .foregroundColor(vm.isFavourite(cards[safeCurrentIndex]) ? .red : .gray)
                                         .padding(20)
                                 }
                             }
@@ -97,6 +98,16 @@ struct FlashcardsView: View {
             .onChange(of: vm.selectedCategory) { _ in
                 currentIndex = 0
                 isFlipped = false
+                dragOffset = 0
+            }
+            .onChange(of: cards.count) { _ in
+                if cards.isEmpty {
+                    currentIndex = 0
+                } else if currentIndex >= cards.count {
+                    currentIndex = cards.count - 1
+                }
+                isFlipped = false
+                dragOffset = 0
             }
         }
     }
@@ -121,6 +132,15 @@ struct FlashcardsView: View {
         }
     }
 
+    private var safeDragOffset: CGFloat {
+        dragOffset.isFinite ? dragOffset.clamped(to: -240...240) : 0
+    }
+
+    private var safeCurrentIndex: Int {
+        guard !cards.isEmpty else { return 0 }
+        return min(max(currentIndex, 0), cards.count - 1)
+    }
+
     private func navigate(by delta: Int) {
         withAnimation(.spring(response: 0.3)) {
             let next = currentIndex + delta
@@ -132,7 +152,8 @@ struct FlashcardsView: View {
 
     private func handleSwipe(_ width: CGFloat) {
         let threshold: CGFloat = 80
-        if width < -threshold {
+        let safeWidth = width.isFinite ? width : 0
+        if safeWidth < -threshold {
             withAnimation(.spring(response: 0.3)) {
                 if currentIndex < cards.count - 1 {
                     currentIndex += 1
@@ -140,7 +161,7 @@ struct FlashcardsView: View {
                 }
                 dragOffset = 0
             }
-        } else if width > threshold {
+        } else if safeWidth > threshold {
             withAnimation(.spring(response: 0.3)) {
                 if currentIndex > 0 {
                     currentIndex -= 1
@@ -211,33 +232,39 @@ struct FlashCard: View {
     }
 
     private var backFace: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 16) {
-                Label(algorithm.timeComplexity, systemImage: "clock")
-                    .font(.headline)
-                    .foregroundColor(.blue)
+        VStack(alignment: .leading, spacing: 14) {
+            Label(algorithm.timeComplexity, systemImage: "clock")
+                .font(.headline)
+                .foregroundColor(.blue)
 
-                Divider()
+            Divider()
 
-                Text("Definition")
-                    .font(.caption.weight(.semibold))
-                    .foregroundColor(.secondary)
-                Text(algorithm.definition)
-                    .font(.subheadline)
+            Text("Definition")
+                .font(.caption.weight(.semibold))
+                .foregroundColor(.secondary)
+            Text(algorithm.definition)
+                .font(.subheadline)
+                .lineLimit(5)
+                .minimumScaleFactor(0.85)
 
-                Divider()
+            Divider()
 
-                Text("Pseudocode")
-                    .font(.caption.weight(.semibold))
-                    .foregroundColor(.secondary)
-                Text(algorithm.pseudocode)
-                    .font(.system(.caption, design: .monospaced))
-                    .padding(10)
-                    .background(Color(.systemGray6))
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-            }
-            .padding(24)
+            Text("Pseudocode")
+                .font(.caption.weight(.semibold))
+                .foregroundColor(.secondary)
+            Text(algorithm.pseudocode)
+                .font(.system(size: 12, design: .monospaced))
+                .lineLimit(9)
+                .minimumScaleFactor(0.8)
+                .padding(10)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .background(Color(.systemGray6))
+                .clipShape(RoundedRectangle(cornerRadius: 8))
+
+            Spacer(minLength: 0)
         }
+        .padding(24)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
     }
 
@@ -259,5 +286,11 @@ struct FlashCard: View {
         case "Hard": return .red
         default: return .gray
         }
+    }
+}
+
+private extension Comparable {
+    func clamped(to range: ClosedRange<Self>) -> Self {
+        min(max(self, range.lowerBound), range.upperBound)
     }
 }
