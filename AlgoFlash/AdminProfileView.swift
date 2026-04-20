@@ -2,62 +2,77 @@ import SwiftUI
 
 struct AdminProfileView: View {
     @EnvironmentObject var authViewModel: AuthViewModel
+    @StateObject private var profileVM = ProfileViewModel()
     @State private var showingLogoutConfirmation = false
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 24) {
-                // Admin Info Card
-                if let user = authViewModel.appUser {
-                    VStack(spacing: 16) {
-                        Image(systemName: "person.crop.circle.fill")
-                            .font(.system(size: 60))
-                            .foregroundColor(.blue)
+            ScrollView {
+                VStack(spacing: 24) {
+                    // Admin Info Card
+                    if let user = profileVM.appUser ?? authViewModel.appUser {
+                        VStack(spacing: 16) {
+                            Image(systemName: "person.crop.circle.fill")
+                                .font(.system(size: 60))
+                                .foregroundColor(.blue)
 
-                        VStack(spacing: 8) {
-                            Text(user.fullName)
-                                .font(.headline)
-                            Text(user.email)
-                                .font(.subheadline)
-                                .foregroundColor(.gray)
-                            
-                            HStack {
-                                Label("Admin", systemImage: "star.fill")
-                                    .font(.caption)
-                                    .foregroundColor(.orange)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 6)
-                                    .background(Color.orange.opacity(0.1))
-                                    .cornerRadius(8)
+                            VStack(spacing: 8) {
+                                Text(user.fullName)
+                                    .font(.headline)
+                                Text(user.email)
+                                    .font(.subheadline)
+                                    .foregroundColor(.gray)
+
+                                HStack {
+                                    Label("Admin", systemImage: "star.fill")
+                                        .font(.caption)
+                                        .foregroundColor(.orange)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 6)
+                                        .background(Color.orange.opacity(0.1))
+                                        .cornerRadius(8)
+                                }
                             }
                         }
+                        .frame(maxWidth: .infinity)
+                        .padding(24)
+                        .background(Color(.systemGray6))
+                        .cornerRadius(12)
+                        .padding(.horizontal, 20)
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(24)
-                    .background(Color(.systemGray6))
-                    .cornerRadius(12)
-                }
 
-                Spacer()
-
-                // Logout Button
-                Button(action: { showingLogoutConfirmation = true }) {
-                    HStack {
-                        Image(systemName: "arrow.left.circle.fill")
-                        Text("Log Out")
+                    ProfileActionsSection(viewModel: profileVM) {
+                        if let uid = profileVM.appUser?.id ?? authViewModel.appUser?.id {
+                            authViewModel.fetchCurrentUser(userId: uid)
+                        }
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(12)
-                    .background(Color.red.opacity(0.1))
-                    .foregroundColor(.red)
-                    .cornerRadius(8)
-                }
 
-                Spacer()
+                    // Logout Button
+                    Button(action: { showingLogoutConfirmation = true }) {
+                        HStack {
+                            Image(systemName: "arrow.left.circle.fill")
+                            Text("Log Out")
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(12)
+                        .background(Color.red.opacity(0.1))
+                        .foregroundColor(.red)
+                        .cornerRadius(8)
+                    }
+                    .padding(.horizontal, 20)
+                }
+                .padding(.vertical, 16)
             }
-            .padding(16)
             .navigationTitle("Admin Profile")
             .navigationBarTitleDisplayMode(.inline)
+            .onAppear {
+                profileVM.fetchProfile()
+            }
+            .overlay {
+                if profileVM.isLoading {
+                    ProgressView()
+                }
+            }
         }
         .confirmationDialog(
             "Log Out",

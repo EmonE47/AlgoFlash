@@ -19,4 +19,39 @@ class AuthService {
     func getCurrentUser() -> User? {
         return Auth.auth().currentUser
     }
+
+    func updateDisplayName(_ fullName: String, completion: @escaping (Error?) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+            completion(AuthServiceError.noCurrentUser)
+            return
+        }
+
+        let changeRequest = user.createProfileChangeRequest()
+        changeRequest.displayName = fullName
+        changeRequest.commitChanges(completion: completion)
+    }
+
+    func sendEmailUpdateVerification(newEmail: String, completion: @escaping (Error?) -> Void) {
+        guard let user = Auth.auth().currentUser else {
+            completion(AuthServiceError.noCurrentUser)
+            return
+        }
+
+        user.sendEmailVerification(beforeUpdatingEmail: newEmail, completion: completion)
+    }
+
+    func sendPasswordReset(email: String, completion: @escaping (Error?) -> Void) {
+        Auth.auth().sendPasswordReset(withEmail: email, completion: completion)
+    }
+}
+
+enum AuthServiceError: LocalizedError {
+    case noCurrentUser
+
+    var errorDescription: String? {
+        switch self {
+        case .noCurrentUser:
+            return "No signed-in user found."
+        }
+    }
 }
