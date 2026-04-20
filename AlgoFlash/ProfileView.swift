@@ -12,7 +12,6 @@ struct ProfileView: View {
                 VStack(spacing: 24) {
                     avatarSection
                     statsSection
-                    accountSection
                     ProfileActionsSection(viewModel: profileVM) {
                         if let uid = profileVM.appUser?.id {
                             authViewModel.fetchCurrentUser(userId: uid)
@@ -89,25 +88,6 @@ struct ProfileView: View {
                     color: .red
                 )
             }
-            .padding(.horizontal, 20)
-        }
-    }
-
-    private var accountSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text("Account")
-                .font(.headline)
-                .padding(.horizontal, 20)
-                .padding(.bottom, 8)
-
-            VStack(spacing: 0) {
-                InfoRow(label: "Full Name", value: profileVM.appUser?.fullName ?? "-")
-                Divider().padding(.leading, 16)
-                InfoRow(label: "Email", value: profileVM.appUser?.email ?? Auth.auth().currentUser?.email ?? "-")
-            }
-            .background(Color(.systemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color(.systemGray5)))
             .padding(.horizontal, 20)
         }
     }
