@@ -154,7 +154,16 @@ struct NewsView: View {
                         LazyVStack(spacing: 18) {
                             header
 
-                            ForEach(viewModel.articles) { article in
+                            if let featured = viewModel.articles.first {
+                                NavigationLink {
+                                    NewsDetailView(article: featured)
+                                } label: {
+                                    FeaturedNewsCard(article: featured)
+                                }
+                                .buttonStyle(.plain)
+                            }
+
+                            ForEach(Array(viewModel.articles.dropFirst()), id: \.id) { article in
                                 NavigationLink {
                                     NewsDetailView(article: article)
                                 } label: {
@@ -183,9 +192,12 @@ struct NewsView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text("Apple News")
+            Text("Tech News")
                 .font(.largeTitle.bold())
-            Text("Popular technology stories from NewsAPI, shown as quick reading cards.")
+            Text("Powered by NewsAPI")
+                .font(.caption.weight(.semibold))
+                .foregroundColor(Color.brand)
+            Text("Popular technology stories for quick reading.")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -196,9 +208,9 @@ struct NewsView: View {
     private var newsBackground: some View {
         LinearGradient(
             colors: [
-                Color.blue.opacity(0.12),
+                Color.brand.opacity(0.12),
                 Color(.systemBackground),
-                Color.orange.opacity(0.08)
+                Color.warning.opacity(0.08)
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing
@@ -207,7 +219,7 @@ struct NewsView: View {
     }
 }
 
-struct NewsCard: View {
+struct FeaturedNewsCard: View {
     let article: NewsArticle
 
     var body: some View {
@@ -217,7 +229,7 @@ struct NewsCard: View {
                     switch phase {
                     case .empty:
                         Rectangle()
-                            .fill(Color.blue.opacity(0.12))
+                            .fill(Color.brand.opacity(0.12))
                             .overlay(ProgressView())
                     case .success(let image):
                         image
@@ -229,7 +241,7 @@ struct NewsCard: View {
                         NewsImageFallback()
                     }
                 }
-                .frame(height: 190)
+                .frame(height: 240)
                 .clipped()
 
                 LinearGradient(
@@ -255,7 +267,7 @@ struct NewsCard: View {
 
             VStack(alignment: .leading, spacing: 10) {
                 Text(article.title)
-                    .font(.headline)
+                    .font(.title3.weight(.bold))
                     .foregroundColor(.primary)
                     .lineLimit(3)
 
@@ -277,17 +289,76 @@ struct NewsCard: View {
                     Label("Read", systemImage: "arrow.right.circle.fill")
                 }
                 .font(.caption.weight(.medium))
-                .foregroundColor(.blue)
+                .foregroundColor(Color.brand)
             }
             .padding(16)
         }
         .background(Color(.systemBackground))
-        .clipShape(RoundedRectangle(cornerRadius: 22, style: .continuous))
+        .clipShape(RoundedRectangle(cornerRadius: 26, style: .continuous))
         .shadow(color: .black.opacity(0.12), radius: 18, x: 0, y: 10)
         .overlay {
-            RoundedRectangle(cornerRadius: 22, style: .continuous)
+            RoundedRectangle(cornerRadius: 26, style: .continuous)
                 .stroke(Color.white.opacity(0.35), lineWidth: 1)
         }
+    }
+}
+
+struct NewsCard: View {
+    let article: NewsArticle
+
+    var body: some View {
+        HStack(spacing: 12) {
+            AsyncImage(url: article.imageURL) { phase in
+                switch phase {
+                case .empty:
+                    Rectangle()
+                        .fill(Color.brand.opacity(0.10))
+                        .overlay(ProgressView().scaleEffect(0.75))
+                case .success(let image):
+                    image
+                        .resizable()
+                        .scaledToFill()
+                case .failure:
+                    NewsImageFallback()
+                @unknown default:
+                    NewsImageFallback()
+                }
+            }
+            .frame(width: 76, height: 76)
+            .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+
+            VStack(alignment: .leading, spacing: 7) {
+                HStack(spacing: 8) {
+                    Text(article.source.name)
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(Color.brand)
+                        .lineLimit(1)
+
+                    Text(article.formattedDate)
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                }
+
+                Text(article.title)
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                    .lineLimit(3)
+
+                if let description = article.description, !description.isEmpty {
+                    Text(description)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .lineLimit(2)
+                }
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(12)
+        .background(Color.surface0)
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+        .shadow(color: .black.opacity(0.08), radius: 12, x: 0, y: 6)
     }
 }
 
@@ -302,7 +373,7 @@ struct NewsDetailView: View {
                         switch phase {
                         case .empty:
                             Rectangle()
-                                .fill(Color.blue.opacity(0.12))
+                                .fill(Color.brand.opacity(0.12))
                                 .overlay(ProgressView())
                         case .success(let image):
                             image
@@ -322,7 +393,7 @@ struct NewsDetailView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         Text(article.source.name.uppercased())
                             .font(.caption.weight(.bold))
-                            .foregroundColor(.blue)
+                            .foregroundColor(Color.brand)
                             .fixedSize(horizontal: false, vertical: true)
 
                         Text(article.title)
@@ -360,7 +431,7 @@ struct NewsDetailView: View {
                             Label("Open Full Article", systemImage: "safari")
                                 .frame(maxWidth: .infinity)
                                 .padding()
-                                .background(Color.blue)
+                                .background(Color.brand)
                                 .foregroundColor(.white)
                                 .clipShape(RoundedRectangle(cornerRadius: 14))
                         }
@@ -374,7 +445,7 @@ struct NewsDetailView: View {
             .scrollDisabled(false)
             .background(
                 LinearGradient(
-                    colors: [Color(.systemBackground), Color.blue.opacity(0.08)],
+                    colors: [Color(.systemBackground), Color.brand.opacity(0.08)],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -395,7 +466,7 @@ struct NewsImageFallback: View {
         Rectangle()
             .fill(
                 LinearGradient(
-                    colors: [Color.blue.opacity(0.55), Color.orange.opacity(0.45)],
+                    colors: [Color.brand.opacity(0.55), Color.warning.opacity(0.45)],
                     startPoint: .topLeading,
                     endPoint: .bottomTrailing
                 )
@@ -416,7 +487,7 @@ struct NewsErrorView: View {
         VStack(spacing: 14) {
             Image(systemName: "wifi.exclamationmark")
                 .font(.system(size: 48))
-                .foregroundColor(.orange)
+                .foregroundColor(Color.warning)
 
             Text("News Unavailable")
                 .font(.title2.bold())
@@ -426,12 +497,7 @@ struct NewsErrorView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
 
-            Button(action: retry) {
-                Label("Try Again", systemImage: "arrow.clockwise")
-                    .padding(.horizontal, 18)
-                    .padding(.vertical, 10)
-            }
-            .buttonStyle(.borderedProminent)
+            AlgoButton(title: "Try Again", icon: "arrow.clockwise", style: .secondary, action: retry)
         }
         .frame(maxWidth: .infinity)
         .padding(24)

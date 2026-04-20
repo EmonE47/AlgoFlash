@@ -44,6 +44,9 @@ struct AddQuestionSheet: View {
                         .lineLimit(3...6)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(AppBackground())
+            .tint(Color.warning)
             .navigationTitle("Add Question")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

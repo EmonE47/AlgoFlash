@@ -44,6 +44,9 @@ struct AddAlgorithmSheet: View {
                         .lineLimit(4...8)
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(AppBackground())
+            .tint(Color.warning)
             .navigationTitle("Add Flashcard")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

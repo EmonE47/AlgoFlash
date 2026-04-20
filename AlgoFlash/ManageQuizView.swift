@@ -9,30 +9,41 @@ struct ManageQuizView: View {
     var body: some View {
         NavigationStack {
             ZStack {
+                AppBackground()
+
                 if viewModel.isLoading {
-                    ProgressView()
+                    ProgressView("Loading questions...")
+                        .padding(18)
+                        .background(.thinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 } else if viewModel.questions.isEmpty {
-                    VStack(spacing: 16) {
-                        Image(systemName: "questionmark.circle")
-                            .font(.system(size: 48))
-                            .foregroundColor(.gray)
-                        Text("No quiz questions yet")
-                            .font(.headline)
-                        Text("Create your first quiz question")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
+                    EmptyStateView(
+                        icon: "questionmark.circle",
+                        title: "No Quiz Questions Yet",
+                        subtitle: "Create the first question for learner practice.",
+                        actionTitle: "Add Question"
+                    ) {
+                        showingAddSheet = true
                     }
                 } else {
                     List {
                         ForEach(viewModel.questions, id: \.id) { question in
                             HStack(spacing: 12) {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.warning.opacity(0.14))
+                                        .frame(width: 42, height: 42)
+                                    Image(systemName: "checkmark.seal.fill")
+                                        .foregroundStyle(Color.warning)
+                                }
+
                                 VStack(alignment: .leading, spacing: 4) {
                                     Text(question.question)
                                         .font(.headline)
                                         .lineLimit(2)
                                     Text("Algorithm ID: \(question.algorithmId)")
-                                        .font(.caption)
-                                        .foregroundColor(.gray)
+                                        .font(.caption.weight(.medium))
+                                        .foregroundStyle(.secondary)
                                 }
                                 .contentShape(Rectangle())
                                 .onTapGesture {
@@ -58,8 +69,11 @@ struct ManageQuizView: View {
                                     Label("Delete", systemImage: "trash")
                                 }
                             }
+                            .padding(.vertical, 6)
+                            .listRowBackground(Color.surface0)
                         }
                     }
+                    .scrollContentBackground(.hidden)
                 }
             }
             .navigationTitle("Manage Quiz")

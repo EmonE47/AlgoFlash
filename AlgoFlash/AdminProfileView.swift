@@ -7,71 +7,41 @@ struct AdminProfileView: View {
 
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 24) {
-                    // Admin Info Card
-                    if let user = profileVM.appUser ?? authViewModel.appUser {
-                        VStack(spacing: 16) {
-                            Image(systemName: "person.crop.circle.fill")
-                                .font(.system(size: 60))
-                                .foregroundColor(.blue)
+            ZStack {
+                AppBackground()
 
-                            VStack(spacing: 8) {
-                                Text(user.fullName)
-                                    .font(.headline)
-                                Text(user.email)
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
+                ScrollView {
+                    VStack(spacing: 24) {
+                        if let user = profileVM.appUser ?? authViewModel.appUser {
+                            adminHero(user: user)
+                        }
 
-                                HStack {
-                                    Label("Admin", systemImage: "star.fill")
-                                        .font(.caption)
-                                        .foregroundColor(.orange)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 6)
-                                        .background(Color.orange.opacity(0.1))
-                                        .cornerRadius(8)
-                                }
+                        ProfileActionsSection(viewModel: profileVM) {
+                            if let uid = profileVM.appUser?.id ?? authViewModel.appUser?.id {
+                                authViewModel.fetchCurrentUser(userId: uid)
                             }
                         }
-                        .frame(maxWidth: .infinity)
-                        .padding(24)
-                        .background(Color(.systemGray6))
-                        .cornerRadius(12)
+
+                        AlgoButton(title: "Log Out", icon: "arrow.left.circle.fill", style: .danger) {
+                            showingLogoutConfirmation = true
+                        }
                         .padding(.horizontal, 20)
+                        .padding(.bottom, 20)
                     }
-
-                    ProfileActionsSection(viewModel: profileVM) {
-                        if let uid = profileVM.appUser?.id ?? authViewModel.appUser?.id {
-                            authViewModel.fetchCurrentUser(userId: uid)
-                        }
-                    }
-
-                    // Logout Button
-                    Button(action: { showingLogoutConfirmation = true }) {
-                        HStack {
-                            Image(systemName: "arrow.left.circle.fill")
-                            Text("Log Out")
-                        }
-                        .frame(maxWidth: .infinity)
-                        .padding(12)
-                        .background(Color.red.opacity(0.1))
-                        .foregroundColor(.red)
-                        .cornerRadius(8)
-                    }
-                    .padding(.horizontal, 20)
+                    .padding(.vertical, 16)
                 }
-                .padding(.vertical, 16)
+
+                if profileVM.isLoading {
+                    ProgressView()
+                        .padding(18)
+                        .background(.thinMaterial)
+                        .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                }
             }
             .navigationTitle("Admin Profile")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
                 profileVM.fetchProfile()
-            }
-            .overlay {
-                if profileVM.isLoading {
-                    ProgressView()
-                }
             }
         }
         .confirmationDialog(
@@ -87,6 +57,41 @@ struct AdminProfileView: View {
                 Text("Are you sure you want to log out?")
             }
         )
+    }
+
+    private func adminHero(user: AppUser) -> some View {
+        VStack(spacing: 14) {
+            ZStack {
+                Circle()
+                    .fill(LinearGradient(colors: [Color.warning, Color.danger.opacity(0.78)], startPoint: .topLeading, endPoint: .bottomTrailing))
+                    .frame(width: 96, height: 96)
+                Image(systemName: "star.fill")
+                    .font(.system(size: 38, weight: .bold))
+                    .foregroundStyle(.white)
+            }
+
+            VStack(spacing: 6) {
+                Text(user.fullName)
+                    .font(.title2.bold())
+                Text(user.email)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+
+                Label("Admin", systemImage: "star.fill")
+                    .font(.caption.weight(.bold))
+                    .foregroundStyle(Color.warning)
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 6)
+                    .background(Color.warning.opacity(0.12))
+                    .clipShape(Capsule())
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(24)
+        .background(Color.surface0)
+        .clipShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
+        .shadow(color: Color.warning.opacity(0.16), radius: 20, x: 0, y: 10)
+        .padding(.horizontal, 20)
     }
 }
 
