@@ -96,35 +96,6 @@ class ProfileViewModel: ObservableObject {
         }
     }
 
-    func sendPasswordReset(completion: (() -> Void)? = nil) {
-        let email = (Auth.auth().currentUser?.email ?? appUser?.email ?? "")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
-
-        guard !email.isEmpty else {
-            errorMessage = "No email address found for this account."
-            successMessage = ""
-            return
-        }
-
-        isLoading = true
-        errorMessage = ""
-        successMessage = ""
-
-        AuthService.shared.sendPasswordReset(email: email) { [weak self] error in
-            Task { @MainActor in
-                guard let self else { return }
-                self.isLoading = false
-                if let error {
-                    self.errorMessage = error.localizedDescription
-                    return
-                }
-
-                self.successMessage = "Password reset email sent to \(email)."
-                completion?()
-            }
-        }
-    }
-
     func clearMessages() {
         errorMessage = ""
         successMessage = ""
