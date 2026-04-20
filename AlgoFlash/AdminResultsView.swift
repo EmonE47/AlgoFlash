@@ -23,8 +23,13 @@ struct AdminResultsView: View {
                     List {
                         ForEach(viewModel.results) { result in
                             VStack(alignment: .leading, spacing: 8) {
-                                Text(result.userEmail.isEmpty ? result.userId : result.userEmail)
+                                Text(result.displayName)
                                     .font(.headline)
+                                if !result.userEmail.isEmpty && result.userEmail != result.displayName {
+                                    Text(result.userEmail)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
                                 HStack {
                                     Text("Score: \(result.score)/\(result.total)")
                                         .font(.subheadline)
