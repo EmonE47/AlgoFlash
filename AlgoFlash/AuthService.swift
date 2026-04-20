@@ -40,9 +40,6 @@ class AuthService {
         user.sendEmailVerification(beforeUpdatingEmail: newEmail, completion: completion)
     }
 
-    func sendPasswordReset(email: String, completion: @escaping (Error?) -> Void) {
-        Auth.auth().sendPasswordReset(withEmail: email, completion: completion)
-    }
 }
 
 enum AuthServiceError: LocalizedError {

@@ -221,17 +221,6 @@ struct ProfileActionsSection: View {
                     .font(.caption)
                     .foregroundColor(.secondary)
 
-                Divider()
-
-                Button {
-                    viewModel.sendPasswordReset()
-                } label: {
-                    Label("Send Password Reset Email", systemImage: "key")
-                        .frame(maxWidth: .infinity)
-                }
-                .buttonStyle(.bordered)
-                .disabled(viewModel.isLoading)
-
                 if !viewModel.errorMessage.isEmpty {
                     Text(viewModel.errorMessage)
                         .font(.footnote)
