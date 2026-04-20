@@ -4,10 +4,23 @@ import FirebaseFirestore
 struct QuizResult: Identifiable {
     let id: String
     let userId: String
+    let userName: String
     let userEmail: String
     let score: Int
     let total: Int
     let date: Date
+
+    var displayName: String {
+        if !userName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return userName
+        }
+
+        if !userEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+            return userEmail
+        }
+
+        return "Unknown User"
+    }
 }
 
 class FirestoreService {
@@ -203,6 +216,7 @@ class FirestoreService {
 
             let result: [String: Any] = [
                 "userId": userId,
+                "userName": user?.fullName ?? "",
                 "userEmail": user?.email ?? "",
                 "score": score,
                 "total": total,
@@ -232,13 +246,19 @@ class FirestoreService {
                 return
             }
 
-            let results = documents.map { document in
+            guard !documents.isEmpty else {
+                completion([])
+                return
+            }
+
+            var results = documents.map { document in
                 let data = document.data()
                 let timestamp = data["date"] as? Timestamp
 
                 return QuizResult(
                     id: document.documentID,
                     userId: data["userId"] as? String ?? "",
+                    userName: (data["userName"] as? String) ?? (data["userFullName"] as? String) ?? "",
                     userEmail: data["userEmail"] as? String ?? "",
                     score: data["score"] as? Int ?? 0,
                     total: data["total"] as? Int ?? 0,
@@ -246,7 +266,31 @@ class FirestoreService {
                 )
             }
 
-            completion(results)
+            let group = DispatchGroup()
+
+            for index in results.indices {
+                guard results[index].userName.isEmpty, !results[index].userId.isEmpty else { continue }
+
+                group.enter()
+                self.fetchUser(userId: results[index].userId) { user in
+                    if let user {
+                        results[index] = QuizResult(
+                            id: results[index].id,
+                            userId: results[index].userId,
+                            userName: user.fullName,
+                            userEmail: results[index].userEmail.isEmpty ? user.email : results[index].userEmail,
+                            score: results[index].score,
+                            total: results[index].total,
+                            date: results[index].date
+                        )
+                    }
+                    group.leave()
+                }
+            }
+
+            group.notify(queue: .main) {
+                completion(results)
+            }
         }
     }
 

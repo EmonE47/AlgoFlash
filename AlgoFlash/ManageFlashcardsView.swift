@@ -4,6 +4,7 @@ struct ManageFlashcardsView: View {
     @StateObject private var viewModel = AdminFlashcardViewModel()
     @State private var showingAddSheet = false
     @State private var editingAlgorithm: Algorithm? = nil
+    @State private var algorithmPendingDeletion: Algorithm? = nil
 
     var body: some View {
         NavigationStack {
@@ -24,20 +25,34 @@ struct ManageFlashcardsView: View {
                 } else {
                     List {
                         ForEach(viewModel.algorithms, id: \.id) { algorithm in
-                            VStack(alignment: .leading, spacing: 4) {
-                                Text(algorithm.title)
-                                    .font(.headline)
-                                Text(algorithm.category)
-                                    .font(.caption)
-                                    .foregroundColor(.gray)
-                            }
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                editingAlgorithm = algorithm
+                            HStack(spacing: 12) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(algorithm.title)
+                                        .font(.headline)
+                                    Text(algorithm.category)
+                                        .font(.caption)
+                                        .foregroundColor(.gray)
+                                }
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    editingAlgorithm = algorithm
+                                }
+
+                                Spacer()
+
+                                Button(role: .destructive) {
+                                    algorithmPendingDeletion = algorithm
+                                } label: {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.red)
+                                        .padding(8)
+                                }
+                                .buttonStyle(.borderless)
+                                .accessibilityLabel("Delete \(algorithm.title)")
                             }
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button(role: .destructive) {
-                                    viewModel.delete(algorithmId: algorithm.id)
+                                    algorithmPendingDeletion = algorithm
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
@@ -61,6 +76,25 @@ struct ManageFlashcardsView: View {
             .sheet(item: $editingAlgorithm) { algorithm in
                 EditAlgorithmSheet(viewModel: viewModel, algorithm: algorithm)
             }
+            .confirmationDialog(
+                "Delete Flashcard",
+                isPresented: deleteConfirmationBinding,
+                titleVisibility: .visible
+            ) {
+                if let algorithm = algorithmPendingDeletion {
+                    Button("Delete \(algorithm.title)", role: .destructive) {
+                        viewModel.delete(algorithmId: algorithm.id)
+                        algorithmPendingDeletion = nil
+                    }
+                }
+                Button("Cancel", role: .cancel) {
+                    algorithmPendingDeletion = nil
+                }
+            } message: {
+                if let algorithm = algorithmPendingDeletion {
+                    Text("This will permanently delete \(algorithm.title).")
+                }
+            }
             .alert("Error", isPresented: .constant(!viewModel.errorMessage.isEmpty)) {
                 Button("OK") {
                     viewModel.errorMessage = ""
@@ -72,6 +106,17 @@ struct ManageFlashcardsView: View {
         .onAppear {
             viewModel.fetchAll()
         }
+    }
+
+    private var deleteConfirmationBinding: Binding<Bool> {
+        Binding(
+            get: { algorithmPendingDeletion != nil },
+            set: { isPresented in
+                if !isPresented {
+                    algorithmPendingDeletion = nil
+                }
+            }
+        )
     }
 }
 
