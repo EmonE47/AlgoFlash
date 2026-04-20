@@ -86,6 +86,14 @@ class FirestoreService {
         updateFavourites(userId: userId, ids: favouriteIDs, completion: completion)
     }
 
+    func updateUserName(userId: String, fullName: String, completion: @escaping (Error?) -> Void) {
+        db.collection("users").document(userId).updateData(["fullName": fullName], completion: completion)
+    }
+
+    func updateUserEmail(userId: String, email: String, completion: @escaping (Error?) -> Void) {
+        db.collection("users").document(userId).updateData(["email": email], completion: completion)
+    }
+
     // MARK: - Algorithms
 
     func fetchAlgorithms(completion: @escaping ([Algorithm]) -> Void) {
