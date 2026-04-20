@@ -6,9 +6,7 @@ struct AlgoFlashApp: App {
     @StateObject private var authViewModel: AuthViewModel
 
     init() {
-        if FirebaseApp.app() == nil {
-            FirebaseApp.configure()
-        }
+        FirebaseApp.configure()
         _authViewModel = StateObject(wrappedValue: AuthViewModel())
     }
     
