@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.2.18)  22 APR 2026 03:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.2.18)  22 APR 2026 03:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -708,133 +708,134 @@ been already used, duplicate ignored
 l.150   \item E
                dit display name and email, synced to Firebase Auth and Fires...
 [1{C:/Users/Admin/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/lm/lm-ts1.enc}]
-[2] (C:\Users\Admin\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
+[2] [3] (C:\Users\Admin\AppData\Local\Programs\MiKTeX\tex/latex/lm\ot1lmr.fd)
 (C:\Users\Admin\AppData\Local\Programs\MiKTeX\tex/latex/lm\omllmm.fd)
 (C:\Users\Admin\AppData\Local\Programs\MiKTeX\tex/latex/lm\omslmsy.fd)
-(C:\Users\Admin\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd) [3]
-<SS/ER_Diagram.jpeg, id=28, 1315.91624pt x 673.51625pt>
+(C:\Users\Admin\AppData\Local\Programs\MiKTeX\tex/latex/lm\omxlmex.fd)
+<SS/ER_Diagram.jpeg, id=27, 1315.91624pt x 673.51625pt>
 File: SS/ER_Diagram.jpeg Graphic file (type jpg)
 <use SS/ER_Diagram.jpeg>
-Package pdftex.def Info: SS/ER_Diagram.jpeg  used on input line 309.
+Package pdftex.def Info: SS/ER_Diagram.jpeg  used on input line 334.
 (pdftex.def)             Requested size: 409.71692pt x 209.70253pt.
-<SS/sequence.png, id=29, 8222.72pt x 4453.63875pt>
+ [4]
+<SS/sequence.png, id=33, 8222.72pt x 4453.63875pt>
 File: SS/sequence.png Graphic file (type png)
 <use SS/sequence.png>
-Package pdftex.def Info: SS/sequence.png  used on input line 319.
+Package pdftex.def Info: SS/sequence.png  used on input line 344.
 (pdftex.def)             Requested size: 455.24411pt x 246.54788pt.
 
-[4 <./SS/ER_Diagram.jpeg> <./SS/sequence.png>]
-<SS/1. sign_up.png, id=37, 557.08125pt x 1061.9675pt>
+[5 <./SS/ER_Diagram.jpeg> <./SS/sequence.png>]
+<SS/1. sign_up.png, id=41, 557.08125pt x 1061.9675pt>
 File: SS/1. sign_up.png Graphic file (type png)
 <use SS/1. sign_up.png>
-Package pdftex.def Info: SS/1. sign_up.png  used on input line 332.
+Package pdftex.def Info: SS/1. sign_up.png  used on input line 357.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/2. login.png, id=38, 557.08125pt x 1061.9675pt>
+<SS/2. login.png, id=42, 557.08125pt x 1061.9675pt>
 File: SS/2. login.png Graphic file (type png)
 <use SS/2. login.png>
-Package pdftex.def Info: SS/2. login.png  used on input line 333.
+Package pdftex.def Info: SS/2. login.png  used on input line 358.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/3. admin_manage_flashcard.png, id=39, 557.08125pt x 1061.9675pt>
+<SS/3. admin_manage_flashcard.png, id=43, 557.08125pt x 1061.9675pt>
 File: SS/3. admin_manage_flashcard.png Graphic file (type png)
 <use SS/3. admin_manage_flashcard.png>
 Package pdftex.def Info: SS/3. admin_manage_flashcard.png  used on input line 3
-34.
+59.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/4. admin_flashcard_add_modal.png, id=40, 557.08125pt x 1061.9675pt>
+<SS/4. admin_flashcard_add_modal.png, id=44, 557.08125pt x 1061.9675pt>
 File: SS/4. admin_flashcard_add_modal.png Graphic file (type png)
 <use SS/4. admin_flashcard_add_modal.png>
 Package pdftex.def Info: SS/4. admin_flashcard_add_modal.png  used on input lin
-e 335.
+e 360.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/5. admin_manage_quizz.png, id=41, 557.08125pt x 1061.9675pt>
+<SS/5. admin_manage_quizz.png, id=45, 557.08125pt x 1061.9675pt>
 File: SS/5. admin_manage_quizz.png Graphic file (type png)
 <use SS/5. admin_manage_quizz.png>
-Package pdftex.def Info: SS/5. admin_manage_quizz.png  used on input line 336.
+Package pdftex.def Info: SS/5. admin_manage_quizz.png  used on input line 361.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/6. admin_add_quiz_modal.png, id=42, 557.08125pt x 1061.9675pt>
+<SS/6. admin_add_quiz_modal.png, id=46, 557.08125pt x 1061.9675pt>
 File: SS/6. admin_add_quiz_modal.png Graphic file (type png)
 <use SS/6. admin_add_quiz_modal.png>
-Package pdftex.def Info: SS/6. admin_add_quiz_modal.png  used on input line 337
+Package pdftex.def Info: SS/6. admin_add_quiz_modal.png  used on input line 362
 .
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/7. admin_results.png, id=43, 557.08125pt x 1061.9675pt>
+<SS/7. admin_results.png, id=47, 557.08125pt x 1061.9675pt>
 File: SS/7. admin_results.png Graphic file (type png)
 <use SS/7. admin_results.png>
-Package pdftex.def Info: SS/7. admin_results.png  used on input line 343.
+Package pdftex.def Info: SS/7. admin_results.png  used on input line 368.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/9. admin_profile.png, id=44, 557.08125pt x 1061.9675pt>
+<SS/9. admin_profile.png, id=48, 557.08125pt x 1061.9675pt>
 File: SS/9. admin_profile.png Graphic file (type png)
 <use SS/9. admin_profile.png>
-Package pdftex.def Info: SS/9. admin_profile.png  used on input line 344.
+Package pdftex.def Info: SS/9. admin_profile.png  used on input line 369.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/10. user_flashcard.png, id=45, 557.08125pt x 1061.9675pt>
+<SS/10. user_flashcard.png, id=49, 557.08125pt x 1061.9675pt>
 File: SS/10. user_flashcard.png Graphic file (type png)
 <use SS/10. user_flashcard.png>
-Package pdftex.def Info: SS/10. user_flashcard.png  used on input line 345.
+Package pdftex.def Info: SS/10. user_flashcard.png  used on input line 370.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/11. user_favourites.png, id=46, 557.08125pt x 1061.9675pt>
+<SS/11. user_favourites.png, id=50, 557.08125pt x 1061.9675pt>
 File: SS/11. user_favourites.png Graphic file (type png)
 <use SS/11. user_favourites.png>
-Package pdftex.def Info: SS/11. user_favourites.png  used on input line 346.
+Package pdftex.def Info: SS/11. user_favourites.png  used on input line 371.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/12. user_quiz.png, id=47, 557.08125pt x 1061.9675pt>
+<SS/12. user_quiz.png, id=51, 557.08125pt x 1061.9675pt>
 File: SS/12. user_quiz.png Graphic file (type png)
 <use SS/12. user_quiz.png>
-Package pdftex.def Info: SS/12. user_quiz.png  used on input line 347.
+Package pdftex.def Info: SS/12. user_quiz.png  used on input line 372.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/13. user_participating_quiz.png, id=48, 557.08125pt x 1061.9675pt>
+<SS/13. user_participating_quiz.png, id=52, 557.08125pt x 1061.9675pt>
 File: SS/13. user_participating_quiz.png Graphic file (type png)
 <use SS/13. user_participating_quiz.png>
 Package pdftex.def Info: SS/13. user_participating_quiz.png  used on input line
- 348.
+ 373.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
- [5 <./SS/1. sign_up.png> <./SS/2. login.png> <./SS/3. admin_manage_flashcard.p
+ [6 <./SS/1. sign_up.png> <./SS/2. login.png> <./SS/3. admin_manage_flashcard.p
 ng> <./SS/4. admin_flashcard_add_modal.png> <./SS/5. admin_manage_quizz.png> <.
 /SS/6. admin_add_quiz_modal.png>]
-<SS/15. user_participating_quiz_correct_submission.png, id=60, 557.08125pt x 10
+<SS/15. user_participating_quiz_correct_submission.png, id=65, 557.08125pt x 10
 61.9675pt>
 File: SS/15. user_participating_quiz_correct_submission.png Graphic file (type 
 png)
 <use SS/15. user_participating_quiz_correct_submission.png>
 Package pdftex.def Info: SS/15. user_participating_quiz_correct_submission.png 
- used on input line 354.
+ used on input line 379.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/17. user_news_details_view.png, id=61, 557.08125pt x 1061.9675pt>
+<SS/17. user_news_details_view.png, id=66, 557.08125pt x 1061.9675pt>
 File: SS/17. user_news_details_view.png Graphic file (type png)
 <use SS/17. user_news_details_view.png>
 Package pdftex.def Info: SS/17. user_news_details_view.png  used on input line 
-355.
+380.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/18. user_news_details_view_lower_part.png, id=62, 557.08125pt x 1061.9675pt
+<SS/18. user_news_details_view_lower_part.png, id=67, 557.08125pt x 1061.9675pt
 >
 File: SS/18. user_news_details_view_lower_part.png Graphic file (type png)
 <use SS/18. user_news_details_view_lower_part.png>
 Package pdftex.def Info: SS/18. user_news_details_view_lower_part.png  used on 
-input line 356.
+input line 381.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/19. user_profile.png, id=63, 557.08125pt x 1061.9675pt>
+<SS/19. user_profile.png, id=68, 557.08125pt x 1061.9675pt>
 File: SS/19. user_profile.png Graphic file (type png)
 <use SS/19. user_profile.png>
-Package pdftex.def Info: SS/19. user_profile.png  used on input line 357.
+Package pdftex.def Info: SS/19. user_profile.png  used on input line 382.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/21. user_flashcard_flip_view.png, id=64, 557.08125pt x 1061.9675pt>
+<SS/21. user_flashcard_flip_view.png, id=69, 557.08125pt x 1061.9675pt>
 File: SS/21. user_flashcard_flip_view.png Graphic file (type png)
 <use SS/21. user_flashcard_flip_view.png>
 Package pdftex.def Info: SS/21. user_flashcard_flip_view.png  used on input lin
-e 358.
+e 383.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-<SS/21. user_flashcard_flip_view_2.png, id=65, 557.08125pt x 1061.9675pt>
+<SS/21. user_flashcard_flip_view_2.png, id=70, 557.08125pt x 1061.9675pt>
 File: SS/21. user_flashcard_flip_view_2.png Graphic file (type png)
 <use SS/21. user_flashcard_flip_view_2.png>
 Package pdftex.def Info: SS/21. user_flashcard_flip_view_2.png  used on input l
-ine 359.
+ine 384.
 (pdftex.def)             Requested size: 136.57462pt x 260.33826pt.
-[6 <./SS/7. admin_results.png> <./SS/9. admin_profile.png> <./SS/10. user_flash
+[7 <./SS/7. admin_results.png> <./SS/9. admin_profile.png> <./SS/10. user_flash
 card.png> <./SS/11. user_favourites.png> <./SS/12. user_quiz.png> <./SS/13. use
-r_participating_quiz.png>] [7 <./SS/15. user_participating_quiz_correct_submiss
+r_participating_quiz.png>] [8 <./SS/15. user_participating_quiz_correct_submiss
 ion.png> <./SS/17. user_news_details_view.png> <./SS/18. user_news_details_view
 _lower_part.png> <./SS/19. user_profile.png> <./SS/21. user_flashcard_flip_view
-.png> <./SS/21. user_flashcard_flip_view_2.png>] [8] (mark1.aux)
+.png> <./SS/21. user_flashcard_flip_view_2.png>] [9] (mark1.aux)
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2026-01-19>
@@ -843,9 +844,9 @@ Package rerunfilecheck Info: File `mark1.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 14852 strings out of 467866
- 243876 string characters out of 5418319
- 705064 words of memory out of 5000000
+ 14853 strings out of 467866
+ 243882 string characters out of 5418319
+ 708066 words of memory out of 5000000
  43463 multiletter control sequences out of 15000+600000
  672420 words of font info for 102 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -855,9 +856,9 @@ b><C:/Users/Admin/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmr12.pfb
 ><C:/Users/Admin/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmri12.pfb
 ><C:/Users/Admin/AppData/Local/Programs/MiKTeX/fonts/type1/public/lm/lmtt12.pfb
 >
-Output written on mark1.pdf (9 pages, 14044543 bytes).
+Output written on mark1.pdf (10 pages, 14046769 bytes).
 PDF statistics:
- 125 PDF objects out of 1000 (max. 8388607)
- 15 named destinations out of 1000 (max. 500000)
+ 129 PDF objects out of 1000 (max. 8388607)
+ 16 named destinations out of 1000 (max. 500000)
  27242 words of extra memory for PDF output out of 29859 (max. 10000000)
 

@@ -63,41 +63,41 @@ The report describes logical folders such as Models, Views, ViewModels, and Serv
 
 ```text
 AlgoFlash/
-|-- AlgoFlash/
-|   |-- AlgoFlashApp.swift
-|   |-- ContentView.swift
-|   |-- AuthService.swift
-|   |-- FirestoreService.swift
-|   |-- AuthViewModel.swift
-|   |-- FlashcardViewModel.swift
-|   |-- QuizViewModel.swift
-|   |-- ProfileViewModel.swift
-|   |-- AdminFlashcardViewModel.swift
-|   |-- AdminQuizViewModel.swift
-|   |-- AdminResultsViewModel.swift
-|   |-- LoginView.swift
-|   |-- SignupView.swift
-|   |-- MainTabView.swift
-|   |-- AdminTabView.swift
-|   |-- FlashcardsView.swift
-|   |-- FavouritesView.swift
-|   |-- QuizView.swift
-|   |-- NewsView.swift
-|   |-- ProfileView.swift
-|   |-- ManageFlashcardsView.swift
-|   |-- ManageQuizView.swift
-|   |-- AdminResultsView.swift
-|   |-- AdminProfileView.swift
-|   |-- DesignSystem.swift
-|   |-- GoogleService-Info.plist
-|   `-- Assets.xcassets/
-|-- AlgoFlash.xcodeproj/
-|-- report/
-|   |-- mark1.tex
-|   |-- mark1.pdf
-|   `-- SS/
-|-- SS/
-`-- README.md
+├── AlgoFlash/
+│   ├── AlgoFlashApp.swift
+│   ├── ContentView.swift
+│   ├── AuthService.swift
+│   ├── FirestoreService.swift
+│   ├── AuthViewModel.swift
+│   ├── FlashcardViewModel.swift
+│   ├── QuizViewModel.swift
+│   ├── ProfileViewModel.swift
+│   ├── AdminFlashcardViewModel.swift
+│   ├── AdminQuizViewModel.swift
+│   ├── AdminResultsViewModel.swift
+│   ├── LoginView.swift
+│   ├── SignupView.swift
+│   ├── MainTabView.swift
+│   ├── AdminTabView.swift
+│   ├── FlashcardsView.swift
+│   ├── FavouritesView.swift
+│   ├── QuizView.swift
+│   ├── NewsView.swift
+│   ├── ProfileView.swift
+│   ├── ManageFlashcardsView.swift
+│   ├── ManageQuizView.swift
+│   ├── AdminResultsView.swift
+│   ├── AdminProfileView.swift
+│   ├── DesignSystem.swift
+│   ├── GoogleService-Info.plist
+│   └── Assets.xcassets/
+├── AlgoFlash.xcodeproj/
+├── report/
+│   ├── mark1.tex
+│   ├── mark1.pdf
+│   └── SS/
+├── SS/
+└── README.md
 ```
 
 ## Data Model
