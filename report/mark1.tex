@@ -224,17 +224,44 @@ The app follows a SwiftUI-first architecture with lightweight \textbf{MVVM}
 
 \begin{verbatim}
 AlgoFlash/
-├── Models/
-├── Services/
-├── ViewModels/
-├── Views/
-├── DesignSystem.swift
-├── AlgoFlashApp.swift
-├── ContentView.swift
+├── AlgoFlash/
+│   ├── AlgoFlashApp.swift
+│   ├── ContentView.swift
+│   ├── AuthService.swift
+│   ├── FirestoreService.swift
+│   ├── AuthViewModel.swift
+│   ├── FlashcardViewModel.swift
+│   ├── QuizViewModel.swift
+│   ├── ProfileViewModel.swift
+│   ├── AdminFlashcardViewModel.swift
+│   ├── AdminQuizViewModel.swift
+│   ├── AdminResultsViewModel.swift
+│   ├── LoginView.swift
+│   ├── SignupView.swift
+│   ├── MainTabView.swift
+│   ├── AdminTabView.swift
+│   ├── FlashcardsView.swift
+│   ├── FavouritesView.swift
+│   ├── QuizView.swift
+│   ├── NewsView.swift
+│   ├── ProfileView.swift
+│   ├── ManageFlashcardsView.swift
+│   ├── ManageQuizView.swift
+│   ├── AdminResultsView.swift
+│   ├── AdminProfileView.swift
+│   ├── DesignSystem.swift
+│   ├── GoogleService-Info.plist
+│   └── Assets.xcassets/
+├── AlgoFlash.xcodeproj/
+├── report/
+│   ├── mark1.tex
+│   ├── mark1.pdf
+│   └── SS/
+├── SS/
 └── README.md
-
 \end{verbatim}
 
+\newpage
 % ===============================================================================
 \section*{Data Model / Entity Relationships}
 % ══════════════════════════════════════════════════════════════════════════════
@@ -290,8 +317,6 @@ Current app access is role-scoped via Firestore. The two roles and their capabil
 	\end{tabular}
 \end{table}
 
-
-\newpage
 \begin{itemize}[leftmargin=1.5em, itemsep=3pt]
   \item Role is stored in the \texttt{AppUser} document in Firestore and resolved at login.
   \item \texttt{ContentView} routes to \texttt{AdminTabView} or \texttt{MainTabView}
